@@ -1,0 +1,8 @@
+	.load {
+		width: 0;
+		height: .3rem;
+		background: rgb(65, 168, 99);
+		position: absolute;
+		top: 0;
+		left: 0;
+	}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>行星轨迹</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        #starBox {
+            background-color: rgba(108, 93, 207, 0.4);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        #starBody {
+            width: 250px;
+            height: 250px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -125px;
+            margin-left: -125px;
+        }
+
+        #star {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            background-color: rgb(249, 174, 81);
+            box-shadow: 0 0 30px 1px rgba(0,0,0,.5);
+        }
+
+        .pathway {
+            width: 250px;
+            height: 250px;
+            border: 1px solid rgb(249, 174, 81);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+        .pathway::before {
+            content: '';
+            display: block;
+            border-radius: 50%;
+            background-color: rgb(249, 174, 81);
+            box-shadow: 0 0 30px 1px rgba(0,0,0,.2);
+
+        }
+
+        .pathway0 {
+            width: 250px;
+            height: 250px;
+            margin-top: -125px;
+            margin-left: -125px;
+        }
+        .pathway0::before {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            top: 50px;
+            left: 0;
+        }
+
+        .pathway1 {
+            width: 200px;
+            height: 200px;
+            margin-top: -100px;
+            margin-left: -100px;
+        }
+        .pathway1::before {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            top: 135px;
+            left: 0;
+        }
+
+        .pathway2 {
+            width: 150px;
+            height: 150px;
+            margin-top: -75px;
+            margin-left: -75px;
+        }
+        .pathway2::before {
+            width: 15px;
+            height: 15px;
+            position: absolute;
+            right: 0;
+            top: 100px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+
+    <div id="starBox">
+        <div id="starBody">
+            <div class="pathway pathway0"></div>
+            <div class="pathway pathway1"></div>
+            <div class="pathway pathway2"></div>
+            <div id="star"></div>
+        </div>
+    </div>
+
+
+    <script>
+        window.onload = function () {
+            var pathway = document.getElementsByClassName('pathway');
+            // pathway.style.transform = 'rotate(90deg)';
+
+
+    
+
+            var timer = null,
+                timer1 = null,
+                timer2 = null;
+            var nRotate = 0,
+                nRotate1 = 0,
+                nRotate2 = 0;
+
+            timer = setInterval(function () {
+                nRotate += 1;
+                if ( nRotate >= 360 ) {
+                    nRotate = 0;
+                }
+                pathway[0].style.transform = "rotate(" + nRotate + "deg)";
+            },10)
+            timer1 = setInterval(function () {
+                nRotate1 += 2;
+                if ( nRotate1 >= 360 ) {
+                    nRotate1 = 0;
+                }
+                pathway[1].style.transform = "rotate(" + nRotate1 + "deg)";
+            },10)
+            timer2 = setInterval(function () {
+                nRotate2 += 3;
+                if ( nRotate2 >= 360 ) {
+                    nRotate2 = 0;
+                }
+                pathway[2].style.transform = "rotate(" + nRotate2 + "deg)";
+            },10)
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+#moveUnclock {
+	width: 40rem;
+	height: 4rem;
+	border-radius: 0.625rem;
+	border: 2px solid #ddd;
+	position: relative;
+}
+
+#block {
+	width: 7rem;
+	height: 3.8rem;
+	border-radius: 10px;
+	background: #55A532;
+	position: absolute;
+	top: 0.12rem;
+	left: 0.1875rem;
+}
+
+.load {
+	width: 0;
+	height: .3rem;
+	background: rgb(65, 168, 99);
+	position: absolute;
+	top: 0;
+	left: 0;
+}
