@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 样式部分可以忽略 -->
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      main {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .media-container {
+        display: flex;
+        gap: 12px;
+      }
+
+      video,
+      canvas {
+        width: 300px;
+        height: 300px;
+        border: 5px solid #000;
+        border-radius: 10px;
+        margin-left: 5px;
+        background-color: #000;
+      }
+
+      .video-container {
+        position: relative;
+      }
+
+      .btn {
+        width: 100px;
+        height: 50px;
+        border-radius: 10px;
+        line-height: 50px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .btn-container {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .btn-stop,
+      .btn-take {
+        cursor: no-drop;
+      }
+
+      .loading {
+        position: absolute;
+        top: 0;
+        left: 10px;
+        right: 0;
+        bottom: 5px;
+        background-color: rgba(0, 0, 0, 0.3);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 8px;
+        border-radius: 10px;
+      }
+
+      .battery {
+        width: 28px;
+        height: 14px;
+        border: 1px #fff solid;
+        border-radius: 2px;
+        -webkit-animation: charge 5s linear infinite;
+        -moz-animation: charge 5s linear infinite;
+        animation: charge 5s linear infinite;
+      }
+      .battery:after {
+        width: 2px;
+        height: 7px;
+        background-color: #fff;
+        border-radius: 0px 1px 1px 0px;
+        position: absolute;
+        content: "";
+        top: 2px;
+        right: -4px;
+      }
+      .loading span {
+        font-size: 12px;
+        color: #fff;
+      }
+      @-webkit-keyframes charge {
+        0% {
+          box-shadow: inset 0px 0px 0px #fff;
+        }
+        100% {
+          box-shadow: inset 30px 0px 0px #fff;
+        }
+      }
+      @-moz-keyframes charge {
+        0% {
+          box-shadow: inset 0px 0px 0px #fff;
+        }
+        100% {
+          box-shadow: inset 30px 0px 0px #fff;
+        }
+      }
+      @keyframes charge {
+        0% {
+          box-shadow: inset 0px 0px 0px #fff;
+        }
+        100% {
+          box-shadow: inset 30px 0px 0px #fff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="media-container">
+        <div class="video-container">
+          <video id="video"></video>
+          <div id="loading" class="loading">
+            <div class="battery"></div>
+            <span>加载中...</span>
+          </div>
+        </div>
+        <!-- 尽量在canvas标签上设置宽高 -->
+        <canvas id="canvas" width="300px" height="300px"></canvas>
+      </div>
+      <div class="btn-container">
+        <button id="play" class="btn btn-play">开启</button>
+        <button id="stop" class="btn btn-stop" disabled>关闭</button>
+        <button id="take" class="btn btn-take" disabled>拍照</button>
+      </div>
+    </main>
+    <script>
+      window.AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext ||
+        window.mozAudioContext;
+
+      const mainObj = {
+        mediaStream:
+          navigator.mediaDevices.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozGetUserMedia ||
+          navigator.msGetUserMedia,
+        isLoadMediaStream: false,
+        isLoading: false,
+        loadingDOM: document.getElementById("loading"),
+        playBtn: document.getElementById("play"),
+        stopBtn: document.getElementById("stop"),
+        takeBtn: document.getElementById("take"),
+        gumStream: null,
+        constraints: {
+          // video属性设置
+          video: {
+            width: 300,
+            height: 300,
+          },
+          // audio属性设置
+          audio: true,
+        },
+      };
+
+      let proxyMain = new Proxy(mainObj, {
+        set(target, key, value) {
+          if (key === "isLoading") {
+            if (value) {
+              mainObj.loadingDOM.style.display = "flex";
+            } else {
+              mainObj.loadingDOM.style.display = "none";
+            }
+          }
+
+          if (key === "isLoadMediaStream") {
+            console.info('value ', value)
+            if (value) {
+              mainObj.playBtn.setAttribute("disabled", "disabled");
+              mainObj.playBtn.style.cursor = "no-drop";
+              mainObj.stopBtn.removeAttribute("disabled");
+              mainObj.stopBtn.style.cursor = "pointer";
+              mainObj.takeBtn.removeAttribute("disabled");
+              mainObj.takeBtn.style.cursor = "pointer";
+            } else {
+              mainObj.playBtn.removeAttribute("disabled");
+              mainObj.playBtn.style.cursor = "pointer";
+              mainObj.stopBtn.setAttribute("disabled", "disabled");
+              mainObj.stopBtn.style.cursor = "no-drop";
+            }
+          }
+        },
+      });
+
+      // 初始化视频流
+      const initalMedia = (cb) => {
+        if (mainObj.mediaStream) {
+          proxyMain.isLoading = true;
+          navigator.mediaDevices
+            .getUserMedia({ audio: true, video: true })
+            .then((stream) => {
+              proxyMain.isLoadMediaStream = true;
+              mainObj.gumStream = stream;
+              if (
+                Object.prototype.toString.call(cb).toLocaleLowerCase() ===
+                "[object function]"
+              ) {
+                cb();
+              }
+            }).finally(() => {
+              proxyMain.isLoading = false;
+            });
+        } else {
+          alert("媒体未加载");
+        }
+      };
+
+      // 开启摄像
+      mainObj.playBtn.onclick = async () => {
+        initalMedia(() => {
+          document.getElementById("video").srcObject = mainObj.gumStream;
+          document.getElementById("video").play();
+        });
+      };
+
+      // 关闭摄像
+      mainObj.stopBtn.onclick = () => {
+        proxyMain.isLoading = true;
+        // 获取流，正常来讲会包含 audio video 两个流
+        let tracks = mainObj.gumStream.getTracks();
+        tracks.forEach((track) => {
+          track.stop();
+        });
+        proxyMain.isLoadMediaStream = false;
+        proxyMain.isLoading = false;
+      };
+
+      // 拍照、canvas绘制
+      mainObj.takeBtn.onclick = () => {
+        let ctx = document.getElementById("canvas").getContext("2d");
+        ctx.drawImage(document.getElementById("video"), 0, 0, 300, 300);
+      };
+    </script>
+  </body>
+</html>

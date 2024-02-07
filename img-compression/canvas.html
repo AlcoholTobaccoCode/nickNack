@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>canvas 压缩</title>
+  </head>
+  <body>
+    <style>
+      .set,
+      .file-info {
+        display: flex;
+      }
+
+      .set {
+        flex-direction: column;
+      }
+
+      .file-info img {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #e6e6e6;
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+
+    <div>
+      <button class="compress">compress</button>
+      <div class="set">
+        <input type="file" name="" id="file-upload" />
+        <input type="number" name="" id="file-quality" />
+      </div>
+      <div class="file-info">
+        <img src="" alt="" id="preview" />
+
+        <div class="info">
+          <p><span>当前压缩比：</span><span class="now-compress"></span></p>
+          <p><span>压缩前：</span><span class="before-compression"></span></p>
+          <p><span>压缩后：</span><span class="after-compression"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const fileUpload = document.querySelector("#file-upload");
+      const fileQuality = document.querySelector("#file-quality");
+      const preview = document.querySelector("#preview");
+      const nowCompress = document.querySelector(".now-compress");
+      const compress = document.querySelector(".compress");
+      const before = document.querySelector(".before-compression");
+      const after = document.querySelector(".after-compression");
+
+      fileUpload.onchange = function (e) {
+        let file = e.target.files[0];
+        let compress = +fileQuality.value || 0.1;
+        nowCompress.innerHTML = compress;
+        go(file, compress);
+      };
+
+      compress.onclick = function() {
+        let file = fileUpload.files[0];
+        let compress = +fileQuality.value || 0.1;
+        nowCompress.innerHTML = compress;
+        go(file, compress);
+      }
+
+      function go(file, quality) {
+        compressImg(file, compress).then(function (res) {
+          console.info(res);
+          before.innerHTML = res.beforeKB + 'kb';
+          after.innerHTML = res.afterKB + 'kb';
+          preview.src = window.URL.createObjectURL(res.file);
+        });
+      }
+
+      /**
+       * 压缩方法
+       * @param {string} file 文件
+       * @param {Number} quality  0~1之间
+       */
+      function compressImg(file, quality) {
+        console.info(quality);
+        if (file[0]) {
+          return Promise.all(
+            Array.from(file).map((e) => compressImg(e, quality))
+          ); // 如果是 file 数组返回 Promise 数组
+        } else {
+          return new Promise((resolve) => {
+            const reader = new FileReader(); // 创建 FileReader
+            reader.onload = ({ target: { result: src } }) => {
+              const image = new Image(); // 创建 img 元素
+              image.onload = async () => {
+                const canvas = document.createElement("canvas"); // 创建 canvas 元素
+                canvas.width = image.width;
+                canvas.height = image.height;
+                canvas
+                  .getContext("2d")
+                  .drawImage(image, 0, 0, image.width, image.height); // 绘制 canvas
+                const canvasURL = canvas.toDataURL("image/jpeg", quality);
+                const buffer = atob(canvasURL.split(",")[1]);
+                let length = buffer.length;
+                const bufferArray = new Uint8Array(new ArrayBuffer(length));
+                while (length--) {
+                  bufferArray[length] = buffer.charCodeAt(length);
+                }
+                const miniFile = new File([bufferArray], file.name, {
+                  type: "image/png",
+                });
+                resolve({
+                  file: miniFile,
+                  origin: file,
+                  beforeSrc: src,
+                  afterSrc: canvasURL,
+                  beforeKB: Number((file.size / 1024).toFixed(2)),
+                  afterKB: Number((miniFile.size / 1024).toFixed(2)),
+                });
+              };
+              image.src = src;
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+  <ul id="main"></ul>
+
+  <button id="getData">getData</button>
+
+
+  <script>
+    var levels = {
+      "1": [
+        {
+          "img": "https://qhrenderpicoss.kujiale.com/r/2023/07/12/L3D223S252ENDPGY5AXAUWJYUALUF3P3XM888.0_1800x300.jpg",
+          "picType": 1,
+          "level": 1,
+          "created": 1689135261707,
+          "panoLink": "https://www.kujiale.com/xiaoguotu/pano/3FO7WU6TK69V",
+          "picDetailType": 223,
+          "picId": "3FO7WU6TK69V",
+          "roomName": "未命名",
+          "roomTypeId": 17,
+          "roomIndex": 11
+        },
+        {
+          "img": "https://qhrenderpicoss.kujiale.com/r/2023/07/12/L3D223S252ENDPGY5ASYUWIYWOLUF3P3UK888.0_1800x300.jpg",
+          "picType": 1,
+          "level": 1,
+          "created": 1689135252099,
+          "panoLink": "https://www.kujiale.com/xiaoguotu/pano/3FO7WU6X22SC",
+          "picDetailType": 223,
+          "picId": "3FO7WU6X22SC",
+          "roomName": "未知"
+        }
+      ],
+      "2": [
+        {
+          "img": "https://qhrenderpicoss.kujiale.com/r/2023/07/26/L3D223S252ENDPHPWLSAUWITE4LUF3P3XA888.0_1800x300.jpg",
+          "picType": 1,
+          "level": 2,
+          "created": 1690344975020,
+          "panoLink": "https://www.kujiale.com/xiaoguotu/pano/3FO7OTSXAJ3L",
+          "picDetailType": 223,
+          "picId": "3FO7OTSXAJ3L",
+          "roomName": "未命名",
+          "roomTypeId": 17,
+          "roomIndex": 11
+        },{
+          "img": "https://qhrenderpicoss.kujiale.com/r/2023/07/26/L3D223S252ENDPHPWLSAUWITE4LUF3P3XA888.0_1800x300.jpg",
+          "picType": 1,
+          "level": 2,
+          "created": 1690344975020,
+          "panoLink": "https://www.kujiale.com/xiaoguotu/pano/3FO7OTSXAJ3L",
+          "picDetailType": 223,
+          "picId": "3FO7OTSKCS3L",
+          "roomName": "未命名",
+          "roomTypeId": 17,
+          "roomIndex": 11
+        }
+      ],
+      "3": [
+        {
+          "img": "https://qhrenderpicoss.kujiale.com/r/2023/07/26/L3D223S252ENDPHPU6IQUWJY7ILUF3P3XS888.0_1800x300.jpg",
+          "picType": 1,
+          "level": 3,
+          "created": 1690351400742,
+          "panoLink": "https://www.kujiale.com/xiaoguotu/pano/3FO7OT242WRB",
+          "picDetailType": 223,
+          "picId": "3FO7OT242WRB",
+          "roomName": "未知"
+        },{
+          "img": "https://qhrenderpicoss.kujiale.com/r/2023/07/26/L3D223S252ENDPHPU6IQUWJY7ILUF3P3XS888.0_1800x300.jpg",
+          "picType": 1,
+          "level": 3,
+          "created": 1690351400742,
+          "panoLink": "https://www.kujiale.com/xiaoguotu/pano/3FO7OT242WRB",
+          "picDetailType": 223,
+          "picId": "3FO7OT24SKCV",
+          "roomName": "未知"
+        }
+      ]
+    }
+
+    console.info(levels)
+
+    const getData = [];
+
+    $(function() {
+      for (const k in levels) {
+        let h = `
+        <br />
+        <br />
+        <li>
+              <div class="levels-info">
+                <label for="${k}">
+                  ${k}层
+                  <input type="checkbox" name="${k}" id="${k}">
+                </label>
+              </div>
+              <div class="levels-images">`
+        if (Object.hasOwnProperty.call(levels, k)) {
+          const el = levels[k];
+          el.forEach(v => {
+            h += `
+                ${v.picId} <br />
+                <label for="${v.picId}">
+                    选中
+                  <input type="checkbox" name="${v.picId}" id="${v.picId}">
+                </label>
+                <label for="${v.picId}">
+                    起始点
+                  <input type="checkbox" name="${v.picId}" id="${v.picId}">
+                </label>
+              </div>
+            </li>
+ 
+            `;
+          getData.push(v.picId);
+          });
+        }
+        $('#main').append(h)
+      }
+    })
+
+
+    $('#getData').click(() => {
+      console.info(getData);
+    })
+
+
+
+
+
+  </script>
+
+</body>
+
+</html>

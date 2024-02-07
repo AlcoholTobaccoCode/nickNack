@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>内网打印</title>
+    <script src="./vconsole.min.js"></script>
+  </head>
+  <body>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: #f2f2f2;
+      }
+
+      .request-tips {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        background-color: #354e8c;
+        transition: all ease-in-out 0.2s;
+      }
+
+      main {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .direction {
+        margin: 20px 0;
+      }
+
+      .upload-file-btn {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background-color: #ffc7c7;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        position: relative;
+        /* display: none; */
+      }
+
+      .upload-file-btn span {
+        position: relative;
+        z-index: 1;
+        font-size: 12px;
+        font-family: "IBM PLex Mono", "ui-monospace", "Consolas", monospace;
+      }
+
+      .upload-file-btn span:nth-child(1) {
+        font-size: 16px;
+      }
+      .upload-file-btn span:nth-child(2) {
+        font-size: 12px;
+      }
+
+      .upload-file-btn-bg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      .submit-confirm-btn {
+        display: none;
+        padding: 8px 26px;
+        color: #fff;
+        border-radius: 8px;
+        background-color: #354e8c;
+        margin-top: 8px;
+      }
+
+      .circle-breath {
+        background: #ffc7c7;
+        box-shadow: 0 0 0 0 #ffc7c7;
+        border-radius: 50%;
+        animation: breath 2.4s infinite;
+      }
+
+      @keyframes breath {
+        0% {
+          transform: scale(0.6);
+          /* 注意rgba中的a的设置 */
+          box-shadow: 0 0 0 0 #ffe2e2;
+        }
+
+        60% {
+          transform: scale(1);
+          box-shadow: 0 0 0 36px rgba(204, 73, 152, 0%);
+        }
+
+        100% {
+          transform: scale(0.6);
+          box-shadow: 0 0 0 0 rgba(204, 73, 152, 0%);
+        }
+      }
+
+      .loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 10;
+        display: none;
+        opacity: 0;
+      }
+
+      .loading.show {
+        display: flex;
+        opacity: 1;
+      }
+
+      .loading .tips {
+        color: #fff;
+        font-family: 'IBM PLex Mono','ui-monospace','Consolas',monospace;
+      }
+
+      .double-bounce {
+        min-width: 60px;
+        min-height: 60px;
+
+        position: relative;
+      }
+
+      .double-bounce1,
+      .double-bounce2 {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-color: #ffc7c7;
+        opacity: 0.6;
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        -webkit-animation: bounce 2s infinite ease-in-out;
+        -moz-animation: bounce 2s infinite ease-in-out;
+        -o-animation: bounce 2s infinite ease-in-out;
+        animation: bounce 2s infinite ease-in-out;
+      }
+
+      .double-bounce2 {
+        -webkit-animation-delay: -1s;
+        -moz-animation-delay: -1s;
+        -o-animation-delay: -1s;
+        animation-delay: -1s;
+      }
+
+      @-webkit-keyframes bounce {
+        0%,
+        100% {
+          -webkit-transform: scale(0);
+        }
+        50% {
+          -webkit-transform: scale(1);
+        }
+      }
+      @-moz-keyframes bounce {
+        0%,
+        100% {
+          -moz-transform: scale(0);
+        }
+        50% {
+          -moz-transform: scale(1);
+        }
+      }
+      @-o-keyframes bounce {
+        0%,
+        100% {
+          -o-transform: scale(0);
+        }
+        50% {
+          -o-transform: scale(1);
+        }
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1);
+        }
+      }
+    </style>
+    <div class="loading" id="loading">
+      <div class="mop-css-1 double-bounce">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
+      </div>
+      <span class="tips">加载中，请稍后...</span>
+    </div>
+    <main>
+      <input
+        hidden
+        type="file"
+        accept=".pdf,.png,.jpeg"
+        id="file-upload"
+        onchange="fileChange"
+      />
+      <input hidden type="text" name="base64Str" id="base64" />
+      <input
+        hidden
+        type="submit"
+        id="submit"
+        value="submit"
+        onclick="uploadData()"
+      />
+
+      <div id="request-tips" class="request-tips"></div>
+      <div id="result"></div>
+      <span onclick="openDebug()">打印方向选择</span>
+      <select id="direction" class="direction">
+        <option value="1">纵向</option>
+        <option value="2">横向</option>
+      </select>
+      <div id="upload-file-btn" class="upload-file-btn" onclick="uploadFile()">
+        <span>选择文档</span>
+        <span>暂只支持「.pdf」文档～❤️</span>
+        <div class="upload-file-btn-bg circle-breath"></div>
+      </div>
+      <div
+        id="submit-confirm-btn"
+        class="submit-confirm-btn"
+        onclick="uploadData()"
+      >
+        <span>上传文档</span>
+      </div>
+      <div
+        id="re-upload"
+        class="submit-confirm-btn"
+        onclick="btnChange('upload')"
+      >
+        <span>重新上传</span>
+      </div>
+    </main>
+
+    <script>
+      let openDebugNum = 0;
+      let vConsole = null;
+
+      window.onload = () => { 
+        const fileUpload = document.querySelector("#file-upload");
+        fileUpload.onchange = fileChange;
+      }
+
+      function fileChange(e) {
+        const file = e.target.files[0];
+        result.innerHTML = `
+                <span>文件名：${file.name}</span>
+                <br />
+                <span>文件大小：${(file.size / 1024 / 1024).toFixed(2)}MB</span>
+                <br />
+              `;
+        btnChange("submit");
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (e) {
+          const base64 = e.target.result;
+          document.querySelector("#base64").value = base64.replace(
+            "data:application/pdf;base64,",
+            ""
+          );
+          // console.info(base64);
+        };
+      }
+
+      function uploadFile(params) {
+        const fileUpload = document.querySelector("#file-upload");
+        fileUpload.click();
+      }
+
+      function uploadData() {
+        const loading = document.querySelector("#loading");
+        const base64 = document.querySelector("#base64");
+        const direction = document.querySelector("#direction");
+        const requestTips = document.querySelector("#request-tips");
+        const sendData = {
+          base64str: base64.value,
+          // 打印方向  1 竖  2 横
+          orientation: +direction.value,
+        };
+        // 创建一个 ajax 请求
+        loading.classList.add('show');
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/common/pdf/dayin");
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(JSON.stringify(sendData));
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            loading.classList.remove('show');
+            console.log(xhr.responseText);
+            // 根据状态码提示
+            let res = null;
+            try {
+              res = JSON.parse(xhr.responseText);
+            } catch (error) {
+              //todo something
+            }
+            if (!res) return;
+            requestTips.style.height = "44px";
+            if (res.code != 200) {
+              requestTips.innerHTML = res.msg;
+            } else {
+              requestTips.innerHTML = res.data;
+              btnChange("upload");
+            }
+            setTimeout(() => {
+              requestTips.innerHTML = "";
+              requestTips.style.height = "0";
+            }, 3000);
+          }
+        };
+
+        xhr.onerror = function (err) {
+          loading.classList.remove('show');
+          console.log("error", err);
+        };
+
+      }
+
+      function btnChange(type) {
+        const fileUpload = document.querySelector("#file-upload");
+        const result = document.querySelector("#result");
+        const base64 = document.querySelector("#base64");
+        const uploadFileBtn = document.querySelector("#upload-file-btn");
+        const submitConfirm = document.querySelector("#submit-confirm-btn");
+        const reUpload = document.querySelector("#re-upload");
+        switch (type) {
+          case "upload":
+            fileUpload.value = "";
+            base64.value = "";
+            result.innerHTML = "";
+            submitConfirm.style.display = "none";
+            reUpload.style.display = "none";
+            uploadFileBtn.style.display = "inline-flex";
+            break;
+          case "submit":
+            reUpload.style.display = "inline-flex";
+            submitConfirm.style.display = "inline-flex";
+            uploadFileBtn.style.display = "none";
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      function openDebug() {
+        openDebugNum += 1;
+        if (openDebugNum > 10) {
+          vConsole = new window.VConsole();
+        }
+      }
+    </script>
+  </body>
+</html>

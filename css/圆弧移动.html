@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      /* @keyframes bimg1 {
+        0% {
+          top: 0;
+        }
+        100% {
+          top: 100px;
+        }
+      }
+      @keyframes bimg2 {
+        0% {
+          left: 0;
+        }
+        100% {
+          left: 200px;
+        }
+      }
+
+      #item {
+        animation: bimg1 2s infinite cubic-bezier(0, 0, 1, 1),
+        bimg2 2s infinite cubic-bezier(0, 1, 0, 1);
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        background: red;
+      } */
+
+      html,
+      body {
+          box-sizing: border-box;
+          width: 100%;
+          height: 100%;
+          /* display: flex; */
+          /* flex-direction: column; */
+          background-color: rgba(0, 128, 128, 0.525);
+          padding: 0;
+          margin: 0;
+      }
+/* 
+      要手写 SVG 路径 (`path`)，你需要了解 SVG 路径的基本命令和参数。SVG 路径的语法相对复杂，但以下是一些常用的命令：
+
+      1. `M` - 移动到 (Move To)：将光标移到指定的坐标点。
+      2. `L` - 画直线 (Line To)：从当前点画一条直线到指定的坐标点。
+      3. `H` - 水平线 (Horizontal Line To)：从当前点水平画一条直线到指定的 x 坐标点。
+      4. `V` - 垂直线 (Vertical Line To)：从当前点垂直画一条直线到指定的 y 坐标点。
+      5. `C` - 贝塞尔曲线 (Cubic Bezier Curve)：从当前点开始画一条三次贝塞尔曲线到指定的点。
+      6. `Q` - 二次贝塞尔曲线 (Quadratic Bezier Curve)：从当前点开始画一条二次贝塞尔曲线到指定的点。
+      7. `A` - 圆弧 (Arc)：画一条弧线。
+
+      下面是一个示例，展示如何手写一个简单的 SVG 路径，该路径描述一个从点 (10,10) 移动到 (50,50)，然后画一条直线到 (100,50) 的路径：
+
+      ```xml
+      <path d="M10,10 L50,50 L100,50" />
+      ```
+
+      在这个示例中，`M` 表示移动到 (10,10)，`L` 表示画直线到 (50,50)，再次使用 `L` 画直线到 (100,50)。
+
+      你可以根据需要组合这些命令来创建更复杂的路径，绘制不同形状和曲线。SVG 路径的语法可能会有些复杂，但一旦熟悉了基本命令，你就可以手写自定义的路径了。如果需要更复杂的路径，建议使用 SVG 编辑器来创建和编辑路径。 */
+
+      /* 
+      `A` 和 `Q` 命令分别用于在 SVG 路径中创建圆弧和二次贝塞尔曲线。
+        1. 圆弧命令 (`A`) 用于绘制圆弧路径。它的一般语法如下：
+
+          ```
+          A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+          ```
+
+          - `rx` 和 `ry` 是两个半轴的半径。
+          - `x-axis-rotation` 是椭圆的 x 轴旋转角度。
+          - `large-arc-flag` 用于确定要使用大圆弧还是小圆弧。设置为 1 表示使用大圆弧，设置为 0 表示使用小圆弧。
+          - `sweep-flag` 用于确定弧线的方向。设置为 1 表示顺时针，设置为 0 表示逆时针。
+          - `x` 和 `y` 是路径的终点坐标。
+
+          这个命令允许你创建椭圆或弧线。
+
+        2. 二次贝塞尔曲线命令 (`Q`) 用于绘制二次贝塞尔曲线路径。它的一般语法如下：
+
+          ```
+          Q control-point-x control-point-y x y
+          ```
+
+          - `control-point-x` 和 `control-point-y` 是控制点的坐标，它们用于定义曲线的形状。
+          - `x` 和 `y` 是曲线的终点坐标。
+
+          `Q` 命令允许你创建平滑的曲线路径，通过控制点的位置可以调整曲线的形状。
+
+        以下是两个示例，展示了如何使用这两个命令：
+
+        1. 圆弧命令 (`A`) 示例：
+
+          ```xml
+          <path d="M10,80 A30,50 0 0,1 60,80" />
+          ```
+
+          这将绘制一个从 (10,80) 到 (60,80) 的圆弧路径，使用了椭圆半轴 (30,50)、顺时针方向绘制。
+
+        2. 二次贝塞尔曲线命令 (`Q`) 示例：
+
+          ```xml
+          <path d="M10,80 Q45,10 80,80" />
+          ```
+
+          这将绘制一个从 (10,80) 到 (80,80) 的平滑曲线路径，其中控制点位于 (45,10)。
+
+        这些命令的详细参数可以根据具体需求进行调整，以创建不同形状和曲线的路径。你可以使用 SVG 路径编辑器来更轻松地创建这些路径。
+      
+      */
+
+      div {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background: linear-gradient(#fc0, #f0c);
+          offset-path: path("M200,200 A50,80 0 1,1 400,200");
+          /* offset-path: path("M10,80 Q45,10 80,80"); */
+          offset-rotate: 0deg;
+          animation: move 3s infinite ease forwards;
+      }
+
+      @keyframes move {
+          0% {
+              offset-distance: 0%;
+          }
+          100% {
+              offset-distance: 100%;
+          }
+      }
+
+    </style>
+  
+  <div id="element"></div>
+    <!-- <div id="item"></div> -->
+  </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #box {
+      width:100%;
+      height: calc(100% - 23px);
+    }
+
+    main {
+      width:100%;
+      height:100%;
+      background-color: rgba(0, 128, 128, 0.281);
+      display: grid;
+    }
+
+    main div {
+      box-sizing: border-box;
+      border: 1px solid red;
+    }
+
+    main.g-1 {
+      grid-template-areas: '.'
+    }
+
+    main.g-2 {
+      grid-template-areas: '. .'
+    }
+
+    main.g-3 {
+      grid-template-areas: '. . .'
+    }
+
+    main.g-4 {
+      grid-template-areas:'. . .'
+                           '. '
+    }
+
+    main.g-5 {
+      grid-template-areas:'. . .'
+                          '. . '
+    }
+    main.g-6 {
+      grid-template-areas:'. . .'
+                          '. . .'
+    }
+    main.g-7 {
+      grid-template-areas:'. . .'
+                          '. . .'
+                          '. '
+    }
+    main.g-8 {
+      grid-template-areas:'. . .'
+                          '. . .'
+                          '..'
+    }
+    main.g-9 {
+      grid-template-areas:'. . .'
+                          '. . .'
+                          '. . .'
+    }
+  </style>
+</head>
+<body>
+  
+  <input type="text" id="grid-input"  />
+  <button onclick="changeGrid()">change</button>
+  <div id="box"></div>
+
+
+  <script>
+    function changeGrid() {
+      var grid = document.getElementById('grid-input');
+      var box = document.getElementById('box')
+      const num = +grid.value;
+      let main = `<main id="main" class="g-${num}">`;
+      for (let i = 0; i < grid.value; i++) {
+        main += `<div>${i + 1}</div>`;
+      }
+      main += '</main>';
+
+      box.innerHTML = main;
+    }
+
+  </script>
+</body>
+</html>

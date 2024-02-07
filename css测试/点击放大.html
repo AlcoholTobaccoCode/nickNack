@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html,
+    body,
+    main {
+      width: 100%;
+      height: 100%;
+    }
+
+    main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(23, 23, 23, 1);
+    }
+
+    .btn-img-main {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 9999px;
+      background: linear-gradient( to right, #434343, #000000 );
+      box-shadow: 0;
+      transition: all ease-in-out .2s;
+    }
+
+    .btn-img-main:hover {
+      box-shadow: rgba(240, 240, 255, 0.1) 0px 4px 16px, rgba(240, 240, 255, 0.05) 0px 8px 32px;
+    }
+
+    .btn-img {
+      object-fit: contain;
+      width: 50%;
+      height: 50%;
+    }
+
+    .preview-box {
+      box-sizing: border-box;
+      position: relative;
+      z-index: 9999999;
+      width: 0%;
+      height: 0%;
+      transition: all ease-in-out .2s;
+      background-color: #fff;
+      padding: 0;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .preview-box header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 10px 20px;
+    }
+    .preview-box header .preview-box-btn-close {
+      font-size: 32px;
+    }
+
+    .preview-box-open {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      border-radius: unset;
+    }
+
+    .preview-box-open-pos-0 {
+      top: 0 !important;
+      left: 0 !important;
+    }
+
+  </style>
+</head>
+<body>
+  <main>
+    <div class="btn-img-main">
+      <img src="./web.png" alt="" class="btn-img">
+      <div class="preview-box">
+        <header>
+          <span class="preview-box-btn-close">x</span>
+        </header>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const btnImg = document.querySelector('.btn-img');
+    const previewBox = document.querySelector('.preview-box');
+    const previewBoxBtnClose = document.querySelector('.preview-box-btn-close');
+
+    btnImg.onclick = () => {
+      if (previewBox) {
+        if (previewBox.classList.contains('preview-box-open')) {
+          previewBox.classList.remove('preview-box-open');
+          previewBox.classList.remove('preview-box-open-pos-0');
+        } else {
+          previewBox.classList.add('preview-box-open');
+          previewBox.classList.add('preview-box-open-pos-0');
+        }
+      }
+    }
+
+    previewBoxBtnClose.onclick = () => {
+      if (previewBox) {
+        previewBox.classList.remove('preview-box-open');
+        setTimeout(() => {
+          previewBox.classList.remove('preview-box-open-pos-0');
+        }, 200);
+      }
+    }
+    // previewBox.style.
+    // 获取位置坐标
+    const previewPosition = btnImg.getBoundingClientRect();
+    previewBox.style.left = `${previewPosition.x}px`;
+    previewBox.style.top = `${previewPosition.y}px`;
+
+  </script>
+</body>
+</html>

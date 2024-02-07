@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <body>
+      <audio id="mp3-data-url" src="" controls></audio>
+    </body>
+    <script src="./data/mp3DataUrl.js"></script>
+    <script src="./data/mp3DataUrl1.js"></script>
+    <script src="./data/mp3DataUrl2.js"></script>
+    <script>
+
+      // 把dataUrl转成blob
+      function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(","),
+          mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]),
+          n = bstr.length,
+          u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {
+          type: mime,
+        });
+      }
+
+      window.onload = async function () {
+        // 音频
+        // audioBlob = dataURLtoBlob(mp3DataUrl1);
+        // console.info('audioBlob ', audioBlob)
+        // blobUrl = window.URL.createObjectURL(audioBlob);
+        // console.info('blobUrl ', blobUrl)
+        // document.getElementById("mp3-data-url").src = blobUrl;
+
+
+        const resAudio = await fetch(mp3DataUrl2);
+        const buffer = await resAudio.arrayBuffer();
+        debugger
+        // document.getElementById("mp3-data-url").src = blobUrl;
+      };
+    </script>
+  </body>
+</html>

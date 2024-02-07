@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+   html,
+      body {
+          box-sizing: border-box;
+          width: 100%;
+          height: 100%;
+          /* display: flex; */
+          /* flex-direction: column; */
+          background-color: rgba(0, 128, 128, 0.525);
+          padding: 30px;
+      }
+
+      .ele {
+        width: 100px;
+        height: 100px;
+        border: 1px solid plum;
+      }
+
+      @keyframes floating {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-16px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .floating-element {
+        animation: floating 2s infinite;
+        margin: 0;
+      }
+
+      @keyframes moveDiv {
+        0% {
+          offset-distance: 0%;
+        }
+        10% {
+          transform: scale(0.9);
+        }
+        20% {
+          transform: scale(0.8);
+        }
+        30% {
+          transform: scale(0.7);
+        }
+        40% {
+          transform: scale(0.6);
+        }
+        50% {
+          transform: scale(0.7);
+          offset-distance: 0deg;
+        }
+        60% {
+          transform: scale(0.9);
+        }
+        70% {
+          transform: scale(1);
+        }
+        100% {
+          offset-distance: 100%;
+        }
+      }
+
+      .move-div {
+        offset-rotate: 0deg;
+        animation: moveDiv 3s infinite ease forwards;
+        z-index: 1;
+      }
+      
+      .move-div-to-wait {
+        offset-path: path("M70,50 A100,25 0 1,1 620,80 M620,80 Q1050,80 740,10");
+      }
+    </style>
+
+    <div class="ele move-div move-div-to-wait"></div>
+  </body>
+</html>

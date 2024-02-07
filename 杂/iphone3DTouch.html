@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 设置理想视口-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>苹果悬浮按钮</title>
+    <style>
+      * {
+        /*初始化*/
+        margin: 0;
+        padding: 0;
+      }
+      .xuanfu {
+        /*外部*/
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: #222a37;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .xuanfu .ball {
+        /*内部*/
+        width: 45px;
+        height: 45px;
+        background: #505662;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .xuanfu .ball::before {
+        content: "";
+        box-sizing: border-box;
+        width: 38px;
+        height: 38px;
+        position: absolute;
+        background: #92959e;
+        border-radius: 50%;
+        border: solid 1px #363d45;
+      }
+      .xuanfu .ball::after {
+        content: "";
+        box-sizing: border-box;
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        background: #ffffff;
+        border-radius: 50%;
+        border: solid 1px #686870;
+      }
+    </style>
+    <script>
+      window.onload = function () {
+        let timer;
+        let xuanfu = document.querySelector(".xuanfu");
+        xuanfu.onmousedown = function (e) {
+          e = e || window.event; //兼容IE  说是这么说 但是IE老版本应该不支持display:flex吧...
+          let left = e.clientX - xuanfu.offsetLeft;
+          let top = e.clientY - xuanfu.offsetTop;
+          console.log(left, top);
+          document.onmousemove = function (e) {
+            e = e || window.event;
+            let mouse_x = e.clientX - left;
+            let mouse_y = e.clientY - top;
+            //限制移动范围
+            if (mouse_x >= document.documentElement.scrollWidth) {
+              mouse_x = document.documentElement.scrollWidth;
+            }
+            if (mouse_x <= 0) {
+              mouse_x = 0;
+            }
+            if (
+              mouse_y >=
+              document.documentElement.scrollHeight - xuanfu.clientHeight
+            ) {
+              mouse_y =
+                document.documentElement.scrollHeight - xuanfu.clientHeight;
+            }
+            if (mouse_y < 0) {
+              mouse_y = 0;
+            }
+            xuanfu.style.left = mouse_x + "px";
+            xuanfu.style.top = mouse_y + "px";
+
+            document.onmouseup = function (e) {
+              e = e || window.event;
+              document.onmousemove = null;
+
+              //吸附效果
+              let middle = document.documentElement.scrollWidth / 2;
+              console.log("宽度：" + document.documentElement.scrollWidth);
+              let left = xuanfu.offsetLeft;
+              console.log("当前位置：" + left);
+              if (left <= middle) {
+                move(xuanfu, "left", 0, 80);
+              } else {
+                console.log(
+                  typeof xuanfu.offsetLeft,
+                  typeof document.documentElement.scrollWidth
+                );
+                console.log(
+                  "目标：" +
+                    (document.documentElement.scrollWidth - xuanfu.clientWidth)
+                );
+                move(
+                  xuanfu,
+                  "left",
+                  document.documentElement.scrollWidth - xuanfu.clientWidth,
+                  80
+                );
+              }
+
+              decodeURIComponent.onmouseup = null;
+              console.log("我放手了 别沾着了");
+            };
+          };
+          return false;
+        };
+      };
+
+      function move(obj, attr, target, speed, callback) {
+        //对象，属性，目标，速度（正值）,回调函数
+        clearInterval(obj.timer); //清除上一个定时器  防止按钮加速
+
+        var currentValue = parseInt(getStyle(obj, attr)); //IE没设置  可能返回auto非具体值
+        if (currentValue > target) {
+          speed = -speed;
+        }
+        //开启专属定时器
+        obj.timer = setInterval(() => {
+          let oldValue = parseInt(getStyle(obj, attr)); //IE没设置  可能返回auto非具体值
+
+          let newValue = oldValue + speed;
+
+          if (
+            (newValue < target && speed < 0) ||
+            (speed > 0 && newValue > target)
+          ) {
+            newValue = target;
+          }
+
+          obj.style[attr] = newValue + "px";
+          if (newValue == target) {
+            clearInterval(obj.timer);
+            callback && callback();
+          }
+        }, 30);
+      }
+
+      //获取当前元素某个样式
+      function getStyle(obj, name) {
+        if (window.getComputedStyle) {
+          return getComputedStyle(obj, null)[name]; //大部分
+        } else {
+          return obj.currentStyle[name]; //IE
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="xuanfu">
+      <div class="ball"></div>
+    </div>
+  </body>
+</html>
+
+<!-- <style>
+    .button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  border-radius: 5px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+  </style>
+
+<button class="button">Press me</button> -->

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./echarts.min.js"></script>
+    <style>
+      #main {
+        width: 100%;
+        height: 400px;
+        margin: 0 auto;
+        background-color: #f5f5f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main"></div>
+
+    <script>
+      window.onload = () => {
+        const chartDom = document.getElementById("main");
+        const myChart = echarts.init(chartDom);
+
+        const yAxisList = [
+          "抚州市临川川区三友竹制品加工厂",
+          "福建邵武佳诚竹木制品有限公司",
+          "蕲春县盛源竹木制品有限公司",
+          "霍山县强峰竹科技有限公司",
+          "咸安区古田康寿竹业专业合作社",
+          "黄山市鑫琳竹业有限公司",
+          "安徽家康竹业科技有限公司",
+          "黟县鑫旺竹制品有限公司",
+          "广西兴安县华江乡升平兴盛竹制品厂",
+          "湖北创佳竹制品有限公司",
+          "宜丰县古阳寨竹业有限公司",
+          "湖南湘宝竹木制品有限公司",
+        ];
+        const xAxisList1 = [
+          18203, 23489, 29034, 104970, 131744, 230230, 630230, 387432, 523432,
+          653224, 653452, 234243,
+        ];
+        const xAxisList2 = [
+          19325, 23438, 31000, 121594, 134141, 481807, 681807, 123124, 656343,
+          534524, 546345, 222344,
+        ];
+        const dataZoomEndValue = 6; // 数据窗口范围的结束数值(一次性展示几个)
+
+        const option = {
+          title: {
+            text: "供应商统记表",
+            left: "center",
+            textStyle: {},
+          },
+          tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+          legend: {
+            bottom: 10,
+            textStyle: {},
+          },
+          grid: { left: 20, right: "4%", bottom: "10%", containLabel: true },
+          xAxis: {
+            type: "value",
+            boundaryGap: [0, 0.01],
+            axisLabel: {},
+          },
+          dataZoom: [
+            {
+              show: false, // 是否显示滑动条
+              yAxisIndex: 0, // 这里是从y轴的0刻度开始
+              startValue: 0, // 数据窗口范围的起始数值
+              endValue: dataZoomEndValue, // 数据窗口范围的结束数值(一次性展示几个)
+            },
+          ],
+          yAxis: {
+            type: "category",
+            axisLabel: {
+              // rotate: -12,
+              interval: 0,
+              formatter: function (value, index) {
+                // 如果 value 长度 >= 8 ，则在第八位添加换行符，原来的第八位顺移到第九位
+                if (value.length >= 8) {
+                  return value.substring(0, 8) + "\n" + value.substring(8);
+                }
+              },
+            },
+            data: yAxisList,
+          },
+          series: [
+            {
+              name: "实收数量(主单位)",
+              type: "bar",
+              label: {
+                show: true,
+                position: "inside",
+                position: ["80%", "0%"],
+                margin: 0,
+              },
+              data: xAxisList1,
+              // rotation: {
+              //   animation: {
+              //     enable: true,
+              //     axisType: "category",
+              //     axisIndex: 0,
+              //     period: 1,
+              //   },
+              // },
+            },
+            {
+              name: "金额",
+              type: "bar",
+              label: {
+                show: true,
+                position: "inside",
+                position: ["80%", "0%"],
+                margin: 0,
+              },
+              data: xAxisList2,
+              // rotation: {
+              //   animation: {
+              //     enable: true,
+              //     axisType: "category",
+              //     axisIndex: 0,
+              //     period: 1,
+              //   },
+              // },
+            },
+          ],
+        };
+
+        if (xAxisList1.length > 0 && yAxisList.length > 0) {
+          setInterval(function () {
+            // 每次向后滚动一个，最后一个从头开始
+            if (option.dataZoom[0].endValue === xAxisList1.length) {
+              option.dataZoom[0].startValue = 0; // 数据窗口范围的起始数值
+              option.dataZoom[0].endValue = dataZoomEndValue; // 数据窗口范围的结束数值
+            } else {
+              option.dataZoom[0].startValue = option.dataZoom[0].startValue + 1; // 数据窗口范围的起始数值
+              option.dataZoom[0].endValue = option.dataZoom[0].endValue + 1; // 数据窗口范围的结束数值
+            }
+            myChart.setOption(option);
+          }, 2000);
+        }
+
+        option && myChart.setOption(option);
+      };
+    </script>
+  </body>
+</html>

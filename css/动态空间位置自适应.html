@@ -1,0 +1,93 @@
+<!-- 
+在一个vue3项目中，我需要一个 css 布局：
+一共两行，存在 6～7 个 div，要求如下：
+1. 一个div时，该div占满整个容器；
+2. 两个div时，上下均分；
+3. 三个div时，第一行2个div，第三行1个；
+4. 四个div时，上下均分：2*2；
+5. 五个div时，第一行3个div，第二行2个；
+6. 六个div时，上下均分：3*3；
+7. 七个div时，第一行3个div，第三行4个；
+
+请问，如何实现（可以使用vue3语法，动态支持不同数量的div样式）？
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Grid Layout</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        grid-gap: 10px;
+        width: 100%;
+        height: 100%;
+      }
+
+      .item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: lightblue;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .item:nth-child(1) {
+        grid-area: 1 / 1 / span 2 / span 3;
+      }
+
+      .item:nth-child(2) {
+        grid-area: 1 / 1 / span 1 / span 3;
+      }
+
+      .item:nth-child(3) {
+        grid-area: 2 / 1 / span 1 / span 3;
+      }
+
+      .item:nth-child(4) {
+        grid-area: 1 / 2 / span 1 / span 2;
+      }
+
+      .item:nth-child(5) {
+        grid-area: 2 / 2 / span 1 / span 2;
+      }
+
+      .item:nth-child(6) {
+        grid-area: 1 / 3 / span 1 / span 1;
+      }
+
+      .item:nth-child(7) {
+        grid-area: 2 / 1 / span 1 / span 4;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="item">1</div>
+      <div class="item">2</div>
+      <div class="item">3</div>
+      <div class="item">4</div>
+      <div class="item">5</div>
+      <div class="item">6</div>
+      <div class="item">7</div>
+    </div>
+  </body>
+</html>

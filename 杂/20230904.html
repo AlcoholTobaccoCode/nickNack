@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+  <body>
+    <ul class="list"></ul>
+
+    <script>
+      const feeItemList = [
+        {
+          orderDisFeeValue: "0",
+          subsId: "",
+          orderListPrice: "0.00",
+          orderFeeValue: "0.00",
+          productOrderId: "8f92fe1d4affcd8e53222a25083c6ab0-11",
+          sortNum: "11",
+          productName: "弹性公网IP",
+        },
+        {
+          orderDisFeeValue: "0.00",
+          subsId: "",
+          orderListPrice: "20.00",
+          orderFeeValue: "20.00",
+          productOrderId: "3c32127db21d57e5be4498169f4c2bc9-12",
+          sortNum: "12",
+          productName: "带宽服务",
+        },
+      ];
+
+      const list = document.querySelector('.list');
+      
+      let str = '';
+      feeItemList.map(ele=> {
+        str = str + `<div style='color:red;line-height: 25px'>${ele.orderListPrice}</div><div style='color:#999999;line-height:25px'><s>${ele.orderFeeValue}</s></div>`;
+      })
+      list.innerHTML = str;
+
+    </script>
+  </body>
+</html>

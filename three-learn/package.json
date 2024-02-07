@@ -1,0 +1,26 @@
+{
+  "name": "three-learn",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.12.2",
+    "stats.js": "^0.17.0",
+    "three-orbitcontrols": "^2.110.3",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@types/three": "^0.155.1",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "sass": "^1.66.1",
+    "three": "^0.155.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vue-tsc": "^1.8.5"
+  }
+}

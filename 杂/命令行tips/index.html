@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>命令行tips</title>
+    <style>
+      .jetbrains-cookies-banner-3-button {
+        position: relative;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        color: #ddd;
+        font: 12px/16px JetBrains Mono Regular, Menlo, Consolas, Monaco,
+          Lucida Console, Liberation Mono, DejaVu Sans Mono,
+          Bitstream Vera Sans Mono, Courier New, monospace, serif;
+        font-weight: 700;
+      }
+
+      .jetbrains-cookies-banner-3-button--accent,
+      .jetbrains-cookies-banner-3-button:focus {
+        color: #fff;
+      }
+
+      .jetbrains-cookies-banner-3-button:hover {
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .jetbrains-cookies-banner-3-button:before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        bottom: -4px;
+        left: -4px;
+      }
+
+      .jetbrains-cookies-banner-3-checkbox {
+        position: relative;
+        color: #ddd;
+        font: 12px/16px JetBrains Mono Regular, Menlo, Consolas, Monaco,
+          Lucida Console, Liberation Mono, DejaVu Sans Mono,
+          Bitstream Vera Sans Mono, Courier New, monospace, serif;
+      }
+
+      .jetbrains-cookies-banner-3-checkbox__input {
+        position: absolute;
+        box-sizing: border-box;
+        opacity: 0.01;
+      }
+
+      .jetbrains-cookies-banner-3-checkbox__visual-input {
+        margin-right: 8px;
+      }
+
+      .jetbrains-cookies-banner-3-checkbox__visual-input:before {
+        content: "[ ]";
+      }
+
+      .jetbrains-cookies-banner-3-checkbox__input:checked
+        ~ .jetbrains-cookies-banner-3-checkbox__visual-input:before {
+        content: "[X]";
+      }
+
+      .jetbrains-cookies-banner-3-checkbox:hover,
+      .jetbrains-cookies-banner-3-checkbox__input:focus
+        ~ .jetbrains-cookies-banner-3-checkbox__label,
+      .jetbrains-cookies-banner-3-checkbox__input:focus
+        ~ .jetbrains-cookies-banner-3-checkbox__visual-input {
+        color: #fff;
+      }
+
+      .jetbrains-cookies-banner-3-checkbox__input:disabled
+        ~ .jetbrains-cookies-banner-3-checkbox__label,
+      .jetbrains-cookies-banner-3-checkbox__input:disabled
+        ~ .jetbrains-cookies-banner-3-checkbox__visual-input {
+        color: #8c8c8c;
+      }
+
+      .jetbrains-cookies-banner-3 {
+        position: fixed;
+        z-index: 999999;
+        right: 0;
+        bottom: 0;
+        box-sizing: border-box;
+        width: 492px;
+        padding: 24px 21px;
+        background-color: #000;
+        border: 1px solid hsla(0, 0%, 100%, 0.24);
+        color: #ccc;
+        font: 12px/16px JetBrains Mono Regular, Menlo, Consolas, Monaco,
+          Lucida Console, Liberation Mono, DejaVu Sans Mono,
+          Bitstream Vera Sans Mono, Courier New, monospace, serif;
+        opacity: 1;
+        transition: opacity 0.3s;
+      }
+
+      .jetbrains-cookies-banner-3--hide {
+        opacity: 0;
+      }
+
+      .jetbrains-cookies-banner-3__window-top-border {
+        display: flex;
+        align-items: center;
+      }
+
+      .jetbrains-cookies-banner-3__window-top-border:before {
+        content: "";
+        display: block;
+        flex-grow: 1;
+      }
+
+      .jetbrains-cookies-banner-3__window-bottom-border,
+      .jetbrains-cookies-banner-3__window-top-border:before {
+        height: 4px;
+        background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMyA0Ij48cGF0aCBmaWxsPSIjY2NjIiBkPSJNMCAwaDV2MUgwek0wIDNoNXYxSDB6TTcgMS41aDR2MUg3eiIvPjwvc3ZnPg==")
+          repeat-x 0 0;
+        background-size: 13px 4px;
+      }
+
+      .jetbrains-cookies-banner-3__body {
+        padding: 16px 20px;
+        margin: 2px 0 4px;
+        position: relative;
+      }
+
+      .jetbrains-cookies-banner-3__body:after,
+      .jetbrains-cookies-banner-3__body:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        height: 100%;
+        left: 2px;
+        width: 1px;
+        background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDE2Ij48cGF0aCBmaWxsPSIjY2NjIiBkPSJNMCAwaDF2MTJIMHoiLz48L3N2Zz4=")
+          repeat-y 0 0;
+        background-size: 1px 16px;
+      }
+
+      .jetbrains-cookies-banner-3__body:after {
+        left: auto;
+        right: 3px;
+      }
+
+      .jetbrains-cookies-banner-3__text-content p {
+        margin: 0;
+        padding: 0;
+      }
+
+      .jetbrains-cookies-banner-3__text-content a {
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .jetbrains-cookies-banner-3__text-content a:hover {
+        text-decoration: underline;
+      }
+
+      .jetbrains-cookies-banner-3__options-list {
+        margin-top: 16px;
+      }
+
+      .jetbrains-cookies-banner-3__options-list
+        .jetbrains-cookies-banner-3-checkbox {
+        margin-right: 32px;
+      }
+
+      .jetbrains-cookies-banner-3__actions {
+        margin-top: 16px;
+      }
+
+      .jetbrains-cookies-banner-3__action {
+        margin-right: 32px;
+      }
+
+      .jetbrains-cookies-banner-3__mobile-close-wrapper {
+        display: none;
+        flex-direction: row-reverse;
+        margin-bottom: 16px;
+      }
+
+      @media (max-width: 640px) {
+        .jetbrains-cookies-banner-3 {
+          width: 100%;
+          padding: 12px 12px 20px;
+        }
+
+        .jetbrains-cookies-banner-3__window-bottom-border,
+        .jetbrains-cookies-banner-3__window-top-border {
+          display: none;
+        }
+
+        .jetbrains-cookies-banner-3__mobile-close-wrapper {
+          display: flex;
+        }
+
+        .jetbrains-cookies-banner-3__body {
+          margin: 0;
+          padding: 0;
+        }
+
+        .jetbrains-cookies-banner-3__body:after,
+        .jetbrains-cookies-banner-3__body:before,
+        .jetbrains-cookies-banner-3__console {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="jetbrains-cookies-banner-3">
+      <!--if-->
+      <div
+        class="jetbrains-cookies-banner-3__window-top-border"
+        data-jetbrains-cookies-banner-mobile-detection-node=""
+      ></div>
+      <div class="jetbrains-cookies-banner-3__body">
+        <div class="jetbrains-cookies-banner-3__text-content">
+          <p>
+            我们的网站使用一些cookie并记录您的IP地址
+            的可访问性、安全性和管理您对 电信网络。您可以禁用数据收集和
+            Cookies可以通过更改您的浏览器设置来实现，但这可能会对您产生怎样的影响
+            本网站正常运行。
+          </p>
+          <p>
+            经您同意，JetBrains也可以使用cookie和您的IP地址收集个人统计数据，并根据隐私政策和使用条款向您提供个性化的优惠和广告。JetBrains可能为此目的使用第三方服务。您可以随时通过访问“选择退出”页面调整或撤回您的同意
+          </p>
+        </div>
+        <!--if-->
+        <div class="jetbrains-cookies-banner-3__actions">
+          <button
+            class="jetbrains-cookies-banner-3-button jetbrains-cookies-banner-3-button--accent jetbrains-cookies-banner-3__action"
+            data-jetbrains-cookies-banner-action="ACCEPT_ALL"
+          >
+            [T]同意</button
+          ><!--if--><button
+            class="jetbrains-cookies-banner-3-button jetbrains-cookies-banner-3__action"
+            data-jetbrains-cookies-banner-action="MANAGE_SETTINGS"
+          >
+            [F]管理设置</button
+          ><!--if--><!--if-->
+        </div>
+      </div>
+      <div class="jetbrains-cookies-banner-3__window-bottom-border"></div>
+    </div>
+  </body>
+</html>

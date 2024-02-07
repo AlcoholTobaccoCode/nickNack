@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>安全认证</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script type="text/javascript"
+			src="https://cn-shanghai-aliyun-cloudauth.oss-cn-shanghai.aliyuncs.com/web_sdk_js/jsvm_all.js"></script>
+
+		<script src="./jweixin-module.js"></script>
+
+		<style>
+			* {
+				padding: 0%;
+				margin: 0;
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				background-color: #f5f5f5;
+			}
+
+			.back-page-btn {
+				display: none;
+				align-items: center;
+				appearance: button;
+				background-color: #0276ff;
+				border-radius: 8px;
+				border-style: none;
+				box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+				box-sizing: border-box;
+				color: #fff;
+				cursor: pointer;
+				display: none;
+				flex-direction: row;
+				flex-shrink: 0;
+				font-family: "RM Neue", sans-serif;
+				font-size: 100%;
+				line-height: 1.15;
+				margin: 0;
+				padding: 10px 21px;
+				text-align: center;
+				text-transform: none;
+				transition: color 0.13s ease-in-out, background 0.13s ease-in-out,
+					opacity 0.13s ease-in-out, box-shadow 0.13s ease-in-out;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+			}
+
+			.back-page-btn:active {
+				background-color: #006ae8;
+			}
+
+			.back-page-btn:hover {
+				background-color: #1c84ff;
+			}
+
+			.loading-box {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				display: none;
+				align-items: center;
+				justify-content: center;
+				z-index: 2;
+			}
+
+			.loading-bg {
+				width: 129px;
+				height: 129px;
+				border-radius: 12px;
+				background-color: #28282864;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.loading {
+				width: 48px;
+				height: 48px;
+				border: 5px solid #fff;
+				border-bottom-color: #2828282a;
+				border-radius: 50%;
+				display: inline-block;
+				-webkit-animation: rotation 1s linear infinite;
+				animation: rotation 1s linear infinite;
+			}
+
+			@keyframes rotation {
+				0% {
+					transform: rotate(0deg);
+				}
+
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- <button onclick="req()">req</button> -->
+
+		<div class="loading-box" id="loading-box">
+			<div class="loading-bg">
+				<span class="loading"></span>
+			</div>
+		</div>
+
+		<div class="back-page-btn" id="back-page-btn">
+			若长时间无响应，点击返回按钮重新进入
+		</div>
+
+		<script>
+			function updateBackPageBtn(form = null) {
+				const backPageBtn = document.getElementById("back-page-btn");
+				const loadingBox = document.getElementById("loading-box");
+				if (!formPage) {
+					backPageBtn.style.display = "none";
+				} else {
+					loadingBox.style.display = "inline-flex";
+					setTimeout(() => {
+						backPageBtn.style.display = "inline-flex";
+						loadingBox.style.display = "none";
+					}, 1000 * 3);
+					backPageBtn.onclick = () => {
+						wx.miniProgram.navigateBack({
+							delta: 1,
+							fail(err) {
+								console.error("err ", err);
+								wx.miniProgram.redirectTo({
+									url: `/pages/tabbar/index/index`,
+								});
+							},
+						});
+					};
+				}
+			}
+
+			function req(token, applyId, form) {
+				if (!token) {
+					let msg = encodeURIComponent("鉴权参数丢失");
+					wx.miniProgram.redirectTo({
+						url: `/pages/common/faceAuthentication/auth?faceError=${msg}`,
+					});
+					return;
+				}
+				if (!applyId) {
+					let msg = encodeURIComponent("审批id丢失");
+					wx.miniProgram.redirectTo({
+						url: `/pages/common/faceAuthentication/auth?faceError=${msg}`,
+					});
+					return;
+				}
+				// 在调用实人认证服务端发起认证请求时需要传入该MetaInfo值
+				var MetaInfo = window.getMetaInfo();
+				// console.info('MetaInfo ', MetaInfo)
+				const xhr = new XMLHttpRequest();
+				xhr.open("POST", "/aliyun-face-api/eztFaceVerify/faceStart");
+				xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+				xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+				const res = {
+					metaInfo: JSON.stringify(MetaInfo),
+					applyId: applyId
+				};
+
+				xhr.send(JSON.stringify(res));
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						// console.log(xhr.responseText);
+						// 根据状态码提示
+						let res = null;
+						try {
+							res = JSON.parse(xhr.responseText);
+						} catch (error) {
+							//todo something
+						}
+						if (!res) return;
+						console.log(res.data);
+						debugger
+						// let certifyUrl = res.data.certifyUrl;
+						// window.location.href = certifyUrl;
+						let data = res.data;
+						data.form = form;
+						wx.miniProgram.redirectTo({
+							url: `/pages/common/faceAuthentication/toAuth?faceAuth=${JSON.stringify(
+                res.data
+              )}`,
+						});
+						// const iframe = document.getElementById('iframe');
+						// iframe.classList.add('iframe');
+						// iframe.setAttribute('src', certifyUrl);
+					}
+				};
+				xhr.onerror = function(err) {
+					console.log("error", err);
+				};
+			}
+
+			// 初始化url对象
+			var url = new URL(window.location.href);
+			if (url.searchParams.get("token")) {
+				const token = url.searchParams.get("token");
+				const applyId = url.searchParams.get("applyId");
+				formPage = url.searchParams.get("form");
+				console.info("token ", token);
+				console.info("applyId ", applyId);
+				console.info("formPage ", formPage);
+				req(token, applyId, formPage);
+				updateBackPageBtn(formPage);
+			}
+
+			// console.info("初始化url对象 ", url);
+			// if (url.searchParams.get("response")) {
+			//   // 解析response
+			//   var response = JSON.parse(url.searchParams.get("response"));
+			//   console.info("response ", response);
+			//   if (response) {
+			//     const certifyId = response.extInfo.certifyId;
+			//     getResult(certifyId);
+			//   }
+			// }
+
+			// function getResult(certifyId) {
+			//   const xhr = new XMLHttpRequest();
+			//   xhr.open("POST", "/aliyun-face-api/facever/describeFaceVerify");
+			//   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+			//   xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+			//   xhr.send(JSON.stringify(certifyId));
+			//   xhr.onreadystatechange = function () {
+			//     if (xhr.readyState === 4 && xhr.status === 200) {
+			//       // console.log(xhr.responseText);
+			//       // 根据状态码提示
+			//       let res = null;
+			//       try {
+			//         res = JSON.parse(xhr.responseText);
+			//       } catch (error) {
+			//         //todo something
+			//       }
+			//       if (!res) return;
+			//       console.log(res);
+			//       console.log(res.data.passed);
+			//       const isPassed = res.data.passed;
+			//       wx.miniProgram.redirectTo({
+			//         url: `/pages/tempPage/index?passed=${isPassed}`
+			//       });
+			//     }
+			//   };
+
+			//   xhr.onerror = function (err) {
+			//     console.log("error", err);
+			//   };
+			// }
+		</script>
+	</body>
+</html>

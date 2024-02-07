@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>js 电梯导航</title>
+    <style>
+        /* 电梯组件样式 */
+        .elevator {
+            position: fixed;
+            /* 固定定位，保证电梯一直在页面可视区域内 */
+            top: 50%;
+            /* 在页面垂直居中 */
+            right: 0;
+            /* 在页面右侧 */
+            transform: translateY(-50%);
+            /* 通过 translateY 属性来调整位置，保证垂直居中 */
+        }
+
+        .elevator ul {
+            list-style: none;
+            /* 去掉列表样式 */
+            margin: 0;
+            /* 去掉外边距 */
+            padding: 0;
+            /* 去掉内边距 */
+        }
+
+        .elevator li {
+            margin: 10px 0;
+            /* 设置每个列表项的上下外边距 */
+        }
+
+        .elevator a {
+            display: block;
+            /* 将链接转换为块级元素，方便设置样式 */
+            padding: 10px;
+            /* 设置内边距 */
+            background-color: #ccc;
+            /* 设置背景颜色 */
+            color: #000;
+            /* 设置文字颜色 */
+            text-decoration: none;
+            /* 去掉下划线 */
+        }
+
+        .elevator a.active {
+            background-color: #000;
+            /* 当前所在楼层链接的背景颜色 */
+            color: #fff;
+            /* 当前所在楼层链接的文字颜色 */
+        }
+
+        /* 页面区块样式 */
+        .section {
+            width: 90vw;
+            /* 页面宽度为视口宽度的90% */
+            height: 110vh;
+            /* 页面高度为视口高度的110% */
+        }
+
+        .section video {
+            width: 100%;
+            /* 视频宽度自适应父级容器 */
+            height: 90%;
+            /* 视频高度为父级容器高度的90% */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="elevator">
+        <ul>
+            <li><a href="#section1">Section 1</a></li>
+            <li><a href="#section2">Section 2</a></li>
+            <li><a href="#section3">Section 3</a></li>
+            <li><a href="#section4">Section 4</a></li>
+            <li><a href="#section5">Section 5</a></li>
+        </ul>
+    </div>
+
+    <div class="section" id="section1">
+        <h2>Section 1</h2>
+        <p>第一块 </p>
+        <video
+            src="https://img-baofun.zhhainiao.com/pcwallpaper_ugc/preview/2366564fa6b83158208eb3181752a8d6_preview.mp4"
+            autoplay muted loop></video>
+    </div>
+
+    <div class="section" id="section2">
+        <h2>Section 2</h2>
+        <p>第二块 </p>
+        <video src="https://img-baofun.zhhainiao.com/market/133/3760b2031ff41ca0bd80bc7a8a13f7bb_preview.mp4" autoplay
+            muted loop></video>
+    </div>
+
+    <div class="section" id="section3">
+        <h2>Section 3</h2>
+        <p>第三块 </p>
+        <video src="https://img-baofun.zhhainiao.com/market/semvideo/3fc6cdef4427e61be69096c6ebb59a1c_preview.mp4"
+            autoplay muted loop></video>
+    </div>
+
+    <div class="section" id="section4">
+        <h2>Section 4</h2>
+        <p>第四块 </p>
+        <video src="https://img-baofun.zhhainiao.com/market/semvideo/6ac24b3f50fda0b1a55f7ff25c6b62af_preview.mp4"
+            autoplay muted loop></video>
+    </div>
+
+    <div class="section" id="section5">
+        <h2>Section 5</h2>
+        <p>第五块 </p>
+        <video src="https://img-baofun.zhhainiao.com/market/133/97ba6b60662ab4f31ef06cdf5a5f8e94_preview.mp4" autoplay
+            muted loop></video>
+    </div>
+
+    <script>
+        // 获取所有的导航链接
+        const links = document.querySelectorAll('.elevator a');
+
+        // 获取所有的内容区块
+        const sections = document.querySelectorAll('.section');
+
+        // 监听窗口滚动事件
+        window.addEventListener('scroll', function () {
+            // 获取滚动条的位置
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
+            // 遍历所有的内容区块
+            sections.forEach(function (section) {
+                // 获取内容区块的位置信息
+                const offsetTop = section.offsetTop;
+                const offsetHeight = section.offsetHeight;
+
+                // 判断当前内容区块是否在可视范围内
+                if (scrollTop >= offsetTop && scrollTop < offsetTop + offsetHeight) {
+                    // 如果在可视范围内，则将对应的导航链接设置为 active 状态
+                    links.forEach(function (link) {
+                        if (link.getAttribute('href') === '#' + section.getAttribute('id')) {
+                            link.classList.add('active');
+                        } else {
+                            link.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        });
+
+        // 监听所有的导航链接的点击事件
+        links.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // 获取目标内容区块的位置信息
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                const targetOffsetTop = targetSection.offsetTop;
+
+                // 使用动画滑动到目标内容区块
+                window.scrollTo({
+                    top: targetOffsetTop,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>

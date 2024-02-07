@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #typewriter-text {
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 1px solid #000;
+      animation: typing 1s steps(40, end), blink-caret 0.75s step-end infinite;
+      font-size: 24px;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes blink-caret {
+      from, to {
+        border-color: transparent;
+      }
+      50% {
+        border-color: black;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="typewriter-text">This is a typewriter effect.</div>
+
+  <script>
+    const text = "This is a typewriter effect.";
+    let charIndex = 0;
+    const speed = 50; // Adjust typing speed (lower value for faster typing)
+
+    function typeWriter() {
+      if (charIndex < text.length) {
+        document.getElementById("typewriter-text").textContent += text.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeWriter, speed);
+      }
+    }
+
+    typeWriter();
+  </script>
+</body>
+</html>

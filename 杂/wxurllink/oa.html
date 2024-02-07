@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>wxurllink</title>
+  </head>
+  <body>
+    <script>
+      window.onload = () => {
+        getToken();
+      };
+
+      function getToken() {
+        const xhr = new XMLHttpRequest();
+        xhr.open(
+          "GET",
+          `/wxurllink-api/cgi-bin/token?grant_type=client_credential&appid=wxd80d2e576d5d4717&secret=14c0b87af8b9fd3851f4826f0f96cd6b`
+        );
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            // 根据状态码提示
+            let res = null;
+            try {
+              res = JSON.parse(xhr.responseText);
+            } catch (error) {
+              //todo something
+            }
+            if (!res) return;
+            getLink(res.access_token);
+          }
+        };
+        xhr.onerror = function (err) {
+          console.log("error", err);
+        };
+      }
+
+      function getLink(token) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", `/wxurllink-api/wxa/generate_urllink?access_token=${token}`);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(
+          JSON.stringify({
+            path: '/pages/tabbar/index/index',
+            query: '',
+            is_expire: true,
+            expire_type: 1,
+            expire_interval: 30,
+            env_version: 'release'
+          })
+        );
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log(xhr.responseText);
+            // 根据状态码提示
+            let res = null;
+            try {
+              res = JSON.parse(xhr.responseText);
+            } catch (error) {
+              //todo something
+            }
+            console.log(res);
+            if (!res) return;
+            if (res.errcode === 0) {
+              window.location.href = res.url_link
+            } else {
+              alert(res.errmsg)
+            }
+          }
+        };
+
+        xhr.onerror = function (err) {
+          console.log("error", err);
+        };
+      }
+    </script>
+  </body>
+</html>
