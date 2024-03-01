@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>优惠规则</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 50px;
+      }
+
+      .delete-rule {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div style="display: flex">
+        <input
+          type="text"
+          id="number-rides"
+          placeholder="一天乘坐几次？"
+          value="2"
+        />
+        <span style="padding: 0 8px"></span>
+        <input
+          type="text"
+          id="single-amount"
+          placeholder="单次消费金额元"
+          value="8"
+        />
+      </div>
+      <!-- E 基础配置 -->
+
+      <div class="rules-item" style="display: flex">
+        <div>
+          <select name="rule-detail" id="rule-detail">
+            <option value="less-than">&lt;</option>
+            <option value="less-than-equal">&lt;=</option>
+            <option value="greater-than">&gt;</option>
+            <option value="greater-than-equal">&gt;=</option>
+          </select>
+          <input
+            type="text"
+            class="threshold"
+            id="threshold"
+            placeholder="消费门槛"
+          />
+        </div>
+        <span style="padding: 0 8px"></span>
+        <div>
+          <input
+            type="text"
+            class="discount"
+            id="discount"
+            placeholder="折扣比例"
+          />
+          <span>折</span>
+        </div>
+      </div>
+      <!-- E 规则列表 -->
+
+      <button class="btn" id="add-rules">新增</button>
+      <button class="btn" id="calc">计算</button>
+
+      <div class="msg-exportation"></div>
+    </div>
+  </body>
+
+  <script>
+    window.onload = function () {
+      // 新增折扣规则
+      const addRules = document.getElementById("add-rules");
+      addRules.addEventListener("click", function (e) {
+        const uuid = generateUUID();
+        const htmlTemplate = `
+        <div>
+          <select name="rule-detail" id="rule-detail-#duqings#">
+            <option value="less-than">&lt;</option>
+            <option value="less-than-equal">&lt;=</option>
+            <option value="greater-than">&gt;</option>
+            <option value="greater-than-equal">&gt;=</option>
+          </select>
+          <input type="text" class="threshold" id="threshold-#duqings#" placeholder="消费门槛" />
+        </div>
+        <span style="padding: 0 8px"></span>
+        <div>
+          <input type="text" class="discount" id="discount-#duqings#" placeholder="折扣比例" />
+          <span>折</span>
+          <span class="delete-rule" onclick="removeRuleItem('${uuid}')">x</span>
+        </div>`;
+
+        // 索引
+        const rulesCounter = document.querySelectorAll(".rules-item").length;
+        // 新建规则
+        const newItem = document.createElement("div");
+        newItem.setAttribute("id", `rules-item-${rulesCounter}`);
+        newItem.setAttribute("data-id", `${uuid}`);
+        newItem.classList.add("rules-item");
+        newItem.style.display = "flex";
+        newItem.innerHTML = htmlTemplate.replace(/#duqings#/g, rulesCounter);
+        // 插入元素
+        addRules.parentNode.insertBefore(newItem, addRules);
+      });
+
+      // 计算
+      const calc = document.getElementById("calc");
+      calc.addEventListener("click", function () {
+        // 乘坐次数
+        const numberRides = document.getElementById("number-rides");
+        let ridesPerDay = parseInt(numberRides.value, 10);
+        if (isNaN(ridesPerDay)) {
+          ridesPerDay = parseInt(prompt("请输入：一天乘坐几次"), 10);
+          if (isNaN(ridesPerDay)) return;
+          numberRides.value = ridesPerDay;
+        }
+
+        // 单次消费金额
+        const singleAmount = document.getElementById("single-amount");
+        let costPerRide = parseInt(singleAmount.value, 10);
+        if (isNaN(costPerRide)) {
+          costPerRide = parseInt(prompt("请输入：一次消费（元）"), 10);
+          if (isNaN(costPerRide)) return;
+          singleAmount.value = costPerRide;
+        }
+
+        // console.info("用户输入：一天乘坐几次 ", ridesPerDay);
+        // console.info("用户输入：一次消费元 ", costPerRide);
+
+        // 获取所有规则并排序
+        const rulesElements = document.querySelectorAll(".rules-item");
+        const rules = Array.from(rulesElements)
+          .map((ruleElement, index) => {
+            const thresholdType = ruleElement.querySelector(
+              'select[name="rule-detail"]'
+            ).value;
+            const threshold = parseFloat(
+              ruleElement.querySelector(".threshold").value
+            );
+            const discount =
+              parseFloat(ruleElement.querySelector(".discount").value) / 100; // 把百分比转换为小数
+            return { thresholdType, threshold, discount };
+          })
+          .sort((a, b) => a.threshold - b.threshold);
+
+        // 验证规则数组是否有冲突
+        if (!validateRules(rules)) {
+          console.error("设置的规则中存在冲突，请重新输入。");
+          alert("设置的规则中存在冲突，请重新输入");
+          return;
+        }
+
+        // 初始化变量
+        let totalSpent = 0;
+        let dayCount = 0;
+        let currentDiscountIndex = 0;
+        let results = [];
+
+        while (currentDiscountIndex < rules.length) {
+          dayCount++;
+          for (let i = 0; i < ridesPerDay; i++) {
+            let rideCost = costPerRide;
+
+            // 应用当前折扣
+            if (currentDiscountIndex > 0) {
+              rideCost *= 1 - rules[currentDiscountIndex - 1].discount;
+            }
+
+            // 检查是否满足下一个规则的门槛
+            if (
+              (rules[currentDiscountIndex].thresholdType ===
+                "less-than-equal" &&
+                totalSpent + rideCost >
+                  rules[currentDiscountIndex].threshold) ||
+              (rules[currentDiscountIndex].thresholdType === "greater-than" &&
+                totalSpent >= rules[currentDiscountIndex].threshold)
+            ) {
+              // 如果是当天的第一次变动，则记录开始享受新折扣的那一天
+              if (i === 0) {
+                results.push(
+                  `第 ${dayCount} 天开始享受 ${
+                    (1 - rules[currentDiscountIndex].discount) * 100
+                  }% 折扣`
+                );
+              }
+
+              currentDiscountIndex++;
+
+              // 如果已经是最后一个规则，跳出循环
+              if (currentDiscountIndex >= rules.length) break;
+
+              rideCost *= 1 - rules[currentDiscountIndex - 1].discount;
+            }
+
+            totalSpent += rideCost; // 累加消费金额
+
+            // 如果在一天中间改变了规则，确保第二次乘车使用新的规则
+            if (
+              (rules[currentDiscountIndex].thresholdType ===
+                "less-than-equal" &&
+                totalSpent > rules[currentDiscountIndex].threshold) ||
+              (rules[currentDiscountIndex].thresholdType === "greater-than" &&
+                totalSpent >= rules[currentDiscountIndex].threshold)
+            ) {
+              currentDiscountIndex++;
+
+              // 如果已经是最后一个规则，跳出循环
+              if (currentDiscountIndex >= rules.length) break;
+
+              results.push(
+                `第 ${dayCount} 天开始享受 ${
+                  (1 - rules[currentDiscountIndex - 1].discount) * 100
+                }% 折扣`
+              );
+            }
+          }
+
+          // 循环结束条件：所有规则都已经检查完毕
+          if (
+            currentDiscountIndex >= rules.length &&
+            ((rules[rules.length - 1].thresholdType === "greater-than" &&
+              totalSpent > rules[rules.length - 1].threshold) ||
+              (rules[rules.length - 1].thresholdType === "less-than-equal" &&
+                totalSpent >= rules[rules.length - 1].threshold))
+          ) {
+            break;
+          }
+        }
+
+        console.log(results.join("\n"));
+      });
+    };
+
+    // 获取所有规则
+    function getRuleInputs(ruleItem) {
+      const thresholdSelect = ruleItem.querySelector(
+        'select[name="rule-detail"]'
+      );
+      const thresholdValue =
+        thresholdSelect.options[thresholdSelect.selectedIndex].value;
+
+      const consumptionInput = ruleItem.querySelector(".threshold");
+      const consumptionValue = Number(consumptionInput.value.trim());
+
+      const discountInput = ruleItem.querySelector(".discount");
+      const discountValue = Number(discountInput.value.trim());
+
+      return {
+        type: thresholdValue,
+        threshold: consumptionValue,
+        discount: discountValue,
+      };
+    }
+
+    // 检测是否达到要求
+    function isThresholdReached(totalSpent, rule) {
+      switch (rule.thresholdType) {
+        case "less-than":
+          return totalSpent < rule.threshold;
+        case "less-than-equal":
+          return totalSpent <= rule.threshold;
+        case "greater-than":
+          return totalSpent > rule.threshold;
+        case "greater-than-equal":
+          return totalSpent >= rule.threshold;
+        default:
+          return false; // 如果类型未知，默认为不满足条件
+      }
+    }
+
+    // 验证规则数组是否有冲突
+    function validateRules(rules) {
+      // 按照门槛值排序规则，确保比较操作可以按顺序进行
+      rules.sort((a, b) => a.threshold - b.threshold);
+
+      for (let i = 0; i < rules.length - 1; i++) {
+        if (
+          (rules[i].thresholdType === "greater-than" ||
+            rules[i].thresholdType === "greater-than-equal") &&
+          (rules[i + 1].thresholdType === "less-than" ||
+            rules[i + 1].thresholdType === "less-than-equal") &&
+          rules[i].threshold >= rules[i + 1].threshold
+        ) {
+          // 如果当前规则为 "大于等于" 并且下一个规则为 "小于等于"，且它们的阈值相等或前者更大，则存在冲突
+          return false;
+        }
+      }
+
+      return true; // 所有检查通过，无冲突
+    }
+
+    function generateUUID() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+        /[xy]/g,
+        function (c) {
+          var r = (Math.random() * 16) | 0,
+            v = c === "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        }
+      );
+    }
+
+    function removeRuleItem(index) {
+      const ele = document.querySelector(`.rules-item[data-id="${index}"]`);
+      if (ele) ele.remove();
+    }
+  </script>
+</html>
