@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Scroll Box</title>
+<style>
+  .container {
+    display: flex;
+    gap: 8px;
+  }
+
+  .image-box {
+    width: 300px;
+    height: 80px;
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
+  }
+
+  .image-box .image-item {
+    box-sizing: border-box;
+    width: 80px;
+    height: 80px;
+    border: 1px solid teal;
+    margin-right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .scroll-button {
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="scroll-button" id="scroll-left">&lt;</button>
+    <div class="image-box" id="imageBox"></div>
+    <button class="scroll-button" id="scroll-right">&gt;</button>
+  </div>
+
+<script>
+  const imageBox = document.getElementById('imageBox');
+  document.getElementById('scroll-left').addEventListener('click', function() {
+    imageBox.scrollLeft -= 70; // 可调整步长
+  });
+  document.getElementById('scroll-right').addEventListener('click', function() {
+    imageBox.scrollLeft += 70; // 可调整步长
+  });
+
+
+  function getRandomColor() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  for (let i = 0; i < 20; i++) {
+    const item = document.createElement('div');
+    item.style.backgroundColor = getRandomColor();
+    item.classList.add('image-item');
+    item.innerHTML = i;
+    imageBox.appendChild(item);
+  }
+
+
+
+</script>
+</body>
+</html>

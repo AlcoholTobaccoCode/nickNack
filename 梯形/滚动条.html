@@ -1,0 +1,62 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-09-10 15:01:53
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-09-10 15:05:11
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <style>
+    .container {
+      width: 300px;
+      height: 300px;
+      overflow-x: auto;
+      background-color: rgba(0, 128, 128, 0.315);
+    }
+
+    .container-item {
+      width: 10000px;
+    }
+
+    /* 隐藏滚动条，设置透明度为0 */
+    .container::-webkit-scrollbar {
+      opacity: 0;
+      width: 12px;
+      transition: opacity 0.3s;
+    }
+
+    /* 鼠标悬停时显示滚动条，设置透明度为1 */
+    .container:hover::-webkit-scrollbar {
+      opacity: 1;
+    }
+
+    /* 设置滚动条轨道的样式 */
+    .container::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* 设置滚动条滑块的样式 */
+    .container::-webkit-scrollbar-thumb {
+      background-color: rgba(76, 175, 80, 0.5);
+      border-radius: 6px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+  </style>
+
+
+<div class="container">
+  <div class="container-item">⛰️</div>
+</div>
+</body>
+
+</html>

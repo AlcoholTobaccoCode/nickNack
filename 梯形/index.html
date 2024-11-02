@@ -1,0 +1,43 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-06-29 14:00:17
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-06-29 14:07:11
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trapezoid with CSS</title>
+  <style>
+    body {
+      background-color: teal;
+    }
+    .trapezoid {
+      width: 46px;
+      height: 18px;
+      background-color: white;
+      clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+      margin: 50px auto;
+      position: relative;
+    }
+
+    .trapezoid::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, 0%) rotate(45deg);
+      border: solid #3B4E75;
+      border-width: 0 1px 1px 0;
+      display: inline-block;
+      padding: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="trapezoid"></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-07-04 17:11:03
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-07-04 17:18:42
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模拟按键</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 16px;
+      color: teal;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="open">open</button>
+  <div class="message">
+    <span>keycode: </span>
+    <span id="keycode"></span>
+  </div>
+
+  <script>
+
+    window.onload = () => {
+      const keycodeEl = document.getElementById('keycode');
+      document.onkeydown = function (ev) {
+        var event = ev || event
+        // if(event.keyCode==13){
+        //     alert("按了enter键")
+        // }
+        console.info('event.keyCode =>', event.keyCode)
+        keycodeEl.innerHTML = event.keyCode;
+      };
+
+      const openBtn = document.getElementById('open');
+      
+      openBtn.onclick = (e) => {
+        setTimeout(() => {
+          var ctrl = new KeyboardEvent('keydown', { 'keyCode': 17, 'which': 17 });
+          document.dispatchEvent(ctrl);
+          setTimeout(() => {
+            var d = new KeyboardEvent('keydown', { 'keyCode': 68, 'which': 68 });
+            document.dispatchEvent(d);
+          }, 100);
+        }, 100);
+      }
+    }
+
+  </script>
+</body>
+
+</html>
