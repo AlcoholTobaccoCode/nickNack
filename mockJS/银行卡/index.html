@@ -1,0 +1,116 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-11-02 15:00:25
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-11-02 15:31:06
+-->
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-11-02 15:00:25
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-11-02 15:01:01
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>测试银行卡生成</title>
+    <script src="./builder.js"></script>
+    <script src="./verify.js"></script>
+
+    <style>
+      .verify {
+        margin-bottom: 20px;
+      }
+
+      .idcard-item .num {
+        display: inline-block;
+        margin-right: 8px;
+        color: #259745;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      function getCards() {
+        var bankType = document.getElementById("bankType").value || "";
+        console.log("bankType => ", bankType);
+        const cards = bcBuilder(20, bankType);
+        console.log("cards => ", cards);
+        const htmlContent = cards
+          .map((card) => {
+            return `
+          <div class="idcard-item">
+            <span class="num" onclick="fillBankCard('${card[0]}')">${card[0]}</span>
+            <span>${card[1]}</span>
+          </div>
+        `;
+          })
+          .join("");
+        document.getElementById("cards").innerHTML = htmlContent;
+      }
+    </script>
+    <div class="verify">
+      <div>
+        <label>输入银行卡号</label><input id="bankCardNod" />
+        <span class="is-vaild-msg"></span>
+      </div>
+      <button onClick="validate()">校验</button>
+    </div>
+    <div class="build">
+      <select id="bankType">
+        <option value="1">借记卡</option>
+        <option value="2">贷记卡</option>
+        <option value="3">准贷记卡</option>
+        <option value="4">信用卡</option>
+      </select>
+      <button onClick="getCards()">生成20张随机的银行卡号</button>
+      <fieldset>
+        <legend>卡号列表</legend>
+        <div id="cards"></div>
+      </fieldset>
+    </div>
+
+    <script>
+      function updateValidationMessage(isValid) {
+        const message = isValid ? "正确" : "不正确";
+        const color = isValid ? "#259745" : "#f00";
+
+        const isVaildMsg = document.querySelector(".is-vaild-msg");
+        if (isVaildMsg) {
+          isVaildMsg.textContent = message;
+          isVaildMsg.style.color = color;
+        } else {
+          alert(message);
+        }
+      }
+
+      function validate() {
+        const bankCardNode = document.getElementById("bankCardNod");
+        if (bankCardNode) {
+          const isValid = bcValidator(bankCardNode.value);
+          updateValidationMessage(isValid);
+        } else {
+          console.error("未发现输入银行的绑定元素");
+        }
+      }
+
+      async function fillBankCard(value) {
+        document.getElementById("bankCardNod").value = value;
+        validate();
+
+        try {
+          await navigator.clipboard.writeText(value);
+          console.info("已复制到剪贴板");
+        } catch (err) {
+          console.error("无法复制到剪贴板:", err);
+        }
+      }
+    </script>
+  </body>
+</html>
