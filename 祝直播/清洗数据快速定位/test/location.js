@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         直播间定位工具
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  直播间定位工具
-// @author       Your name
+// @author       duqings
 // @match        *://zhibo-test.yeeshun.net/*
 // @match        *://localhost/*
 // @grant        GM_xmlhttpRequest
@@ -255,7 +255,7 @@
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: `http://127.0.0.1:40001/api/tasks?room_id=${roomId}`,
+                url: `http://124.222.150.175:40001/api/tasks?room_id=${roomId}`,
                 onload: function(response) {
                     try {
                         const data = JSON.parse(response.responseText);
