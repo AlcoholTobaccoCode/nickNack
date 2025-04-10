@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行程预订 - 五泄风景区</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2B4C7E;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2B4C7E;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .booking-banner {
+            height: 40vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('images/booking-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .banner-content {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .banner-content h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .booking-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .package-options {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .package-option {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .package-option:hover {
+            border-color: #4CAF50;
+            background-color: #f9f9f9;
+        }
+
+        .package-option.selected {
+            border-color: #4CAF50;
+            background-color: #e8f5e9;
+        }
+
+        .package-option input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .booking-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .info-card h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-list li::before {
+            content: '•';
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-nav.active {
+                display: block;
+            }
+
+            .booking-sidebar {
+                position: static;
+            }
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 60px 20px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-section a:hover {
+            color: #2B4C7E;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: #2B4C7E;
+            border-radius: 2px;
+        }
+
+        .submit-button {
+            background-color: #2B4C7E;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #1B3B68;
+        }
+
+        .package-card.selected {
+            border-color: #2B4C7E;
+            box-shadow: 0 5px 15px rgba(43, 76, 126, 0.2);
+        }
+
+        .package-card.selected .package-price {
+            color: #2B4C7E;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #2B4C7E;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tree"></i>
+                乡村旅游
+            </a>
+            <button class="mobile-nav-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="scenic.html">景点介绍</a>
+                <a href="culture.html">民俗文化</a>
+                <a href="food.html">特色美食</a>
+                <a href="booking.html" class="active">行程预订</a>
+            </nav>
+        </div>
+        <div class="mobile-nav">
+            <a href="index.html">首页</a>
+            <a href="scenic.html">景点介绍</a>
+            <a href="culture.html">民俗文化</a>
+            <a href="food.html">特色美食</a>
+            <a href="booking.html" class="active">行程预订</a>
+        </div>
+    </header>
+
+    <section class="booking-banner">
+        <div class="banner-content">
+            <h1>行程预订</h1>
+            <p>为您定制完美的五泄之旅</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div class="booking-form">
+            <h2>预订信息</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" name="name" required placeholder="请输入您的姓名">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">联系电话</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="请输入您的联系电话">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">电子邮箱</label>
+                    <input type="text" id="email" name="email" required placeholder="请输入您的电子邮箱">
+                </div>
+
+                <div class="form-group">
+                    <label for="date">游玩日期</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="people">游玩人数</label>
+                    <select id="people" name="people" required>
+                        <option value="">请选择人数</option>
+                        <option value="1">1人</option>
+                        <option value="2">2人</option>
+                        <option value="3">3人</option>
+                        <option value="4">4人</option>
+                        <option value="5">5人及以上</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>选择套餐</label>
+                    <div class="package-options">
+                        <label class="package-option">
+                            <input type="radio" name="package" value="standard" required>
+                            <div>
+                                <h4>标准一日游</h4>
+                                <p>含景区门票、导游讲解、中餐</p>
+                                <strong>¥298/人</strong>
+                            </div>
+                        </label>
+                        <label class="package-option">
+                            <input type="radio" name="package" value="premium">
+                            <div>
+                                <h4>精品两日游</h4>
+                                <p>含景区门票、导游讲解、住宿、三餐</p>
+                                <strong>¥598/人</strong>
+                            </div>
+                        </label>
+                        <label class="package-option">
+                            <input type="radio" name="package" value="luxury">
+                            <div>
+                                <h4>豪华三日游</h4>
+                                <p>含景区门票、专属导游、高级住宿、特色美食</p>
+                                <strong>¥898/人</strong>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="requirements">特殊要求</label>
+                    <textarea id="requirements" name="requirements" rows="4" placeholder="如有特殊要求请在此说明"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">提交预订</button>
+            </form>
+        </div>
+
+        <div class="booking-sidebar">
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle"></i> 预订须知</h3>
+                <ul class="info-list">
+                    <li>请提前3天预订行程</li>
+                    <li>预订成功后将收到确认短信</li>
+                    <li>可提前24小时免费取消</li>
+                    <li>特殊节假日需提前咨询</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-phone"></i> 咨询热线</h3>
+                <ul class="info-list">
+                    <li>电话：0575-XXXXXXXX</li>
+                    <li>工作时间：09:00-18:00</li>
+                    <li>QQ：XXXXXXXXX</li>
+                    <li>微信：wuxie_tourism</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> 公司简介</a></li>
+                    <li><a href="#"><i class="fas fa-history"></i> 联系方式</a></li>
+                    <li><a href="#"><i class="fas fa-award"></i> 加入我们</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>旅游服务</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-route"></i> 行程定制</a></li>
+                    <li><a href="#"><i class="fas fa-hotel"></i> 住宿预订</a></li>
+                    <li><a href="#"><i class="fas fa-user-tie"></i> 导游服务</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>帮助中心</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-book"></i> 预订指南</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> 常见问题</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> 安全须知</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> 咨询电话：0575-XXXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> 邮箱：info@wuxie.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 地址：浙江省绍兴市诸暨市五泄镇</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-douyin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>版权所有 © 2024 五泄风景区</p>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端导航菜单
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        mobileNavToggle.addEventListener('click', function() {
+            mobileNav.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (mobileNav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // 套餐选择效果
+        const packageOptions = document.querySelectorAll('.package-option');
+        packageOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                packageOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('预订信息已提交，我们将尽快与您联系！');
+            this.reset();
+        });
+    </script>
+</body>
+</html> 

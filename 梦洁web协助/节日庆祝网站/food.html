@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节日美食 - 节日庆祝网站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .food-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/food-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+
+        .food-banner h1 {
+            color: white;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .food-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .food-category {
+            margin-bottom: 60px;
+        }
+
+        .category-title {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .category-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #ff4d4d;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .food-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .food-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .food-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .food-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .food-info {
+            padding: 20px;
+        }
+
+        .food-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .food-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .food-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .food-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .food-rating {
+            color: #ffc107;
+        }
+
+        .recipe-button {
+            display: inline-block;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .recipe-button:hover {
+            background-color: #ff3333;
+        }
+
+        .food-filter {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-button {
+            padding: 8px 20px;
+            border: 2px solid #ff4d4d;
+            border-radius: 25px;
+            background: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-button:hover,
+        .filter-button.active {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .food-tips {
+            background-color: #fff3f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 40px 0;
+        }
+
+        .tips-title {
+            color: #ff4d4d;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .tips-list li:before {
+            content: "✓";
+            color: #ff4d4d;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="custom.html">节日习俗</a></li>
+                <li><a href="food.html" class="active">节日美食</a></li>
+                <li><a href="activity.html">节日活动</a></li>
+                <li><a href="blessing.html">节日祝福</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="food-banner">
+        <h1>传统节日美食</h1>
+        <p>品味传统，感受舌尖上的节日文化</p>
+    </div>
+
+    <main class="food-container">
+        <div class="food-filter">
+            <button class="filter-button active" onclick="filterFood('all')">全部</button>
+            <button class="filter-button" onclick="filterFood('spring')">春节美食</button>
+            <button class="filter-button" onclick="filterFood('qingming')">清明美食</button>
+            <button class="filter-button" onclick="filterFood('labor')">劳动节美食</button>
+            <button class="filter-button" onclick="filterFood('dragon')">端午美食</button>
+            <button class="filter-button" onclick="filterFood('national')">国庆美食</button>
+            <button class="filter-button" onclick="filterFood('moon')">中秋美食</button>
+            <button class="filter-button" onclick="filterFood('newyear')">元旦美食</button>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">春节特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="spring">
+                    <div class="food-tag">必吃</div>
+                    <img src="images/dumplings.jpg" alt="饺子" onerror="this.src='https://placeholder.im/300x200?text=饺子'">
+                    <div class="food-info">
+                        <h3 class="food-title">饺子</h3>
+                        <p class="food-description">象征"更岁交子"，寓意着新旧交替、团圆美满。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+
+                <div class="food-card" data-category="spring">
+                    <img src="images/niangao.jpg" alt="年糕" onerror="this.src='https://placeholder.im/300x200?text=年糕'">
+                    <div class="food-info">
+                        <h3 class="food-title">年糕</h3>
+                        <p class="food-description">寓意"年年高升"，是春节餐桌上不可或缺的美食。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">清明节特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="qingming">
+                    <img src="images/qingtuan.jpg" alt="青团" onerror="this.src='https://placeholder.im/300x200?text=青团'">
+                    <div class="food-info">
+                        <h3 class="food-title">青团</h3>
+                        <p class="food-description">以艾草和糯米为主料制作的传统清明美食。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">劳动节特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="labor">
+                    <img src="images/spring-rolls.jpg" alt="春卷" onerror="this.src='https://placeholder.im/300x200?text=春卷'">
+                    <div class="food-info">
+                        <h3 class="food-title">春卷</h3>
+                        <p class="food-description">象征着春天的美食，酥脆可口。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">国庆节特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="national">
+                    <img src="images/mooncake.jpg" alt="国庆月饼" onerror="this.src='https://placeholder.im/300x200?text=国庆月饼'">
+                    <div class="food-info">
+                        <h3 class="food-title">国庆特制月饼</h3>
+                        <p class="food-description">国庆节特制的节日美食，寓意团圆。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">元旦特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="newyear">
+                    <img src="images/new-year-cake.jpg" alt="年糕" onerror="this.src='https://placeholder.im/300x200?text=年糕'">
+                    <div class="food-info">
+                        <h3 class="food-title">元旦年糕</h3>
+                        <p class="food-description">象征新的一年节节高升。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">端午节特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="dragon">
+                    <div class="food-tag">传统</div>
+                    <img src="images/zongzi.jpg" alt="粽子" onerror="this.src='https://placeholder.im/300x200?text=粽子'">
+                    <div class="food-info">
+                        <h3 class="food-title">端午粽子</h3>
+                        <p class="food-description">用糯米裹着各种馅料，用粽叶包裹蒸制而成，是端午节必备美食。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+                <div class="food-card" data-category="dragon">
+                    <img src="images/realgar-wine.jpg" alt="雄黄酒" onerror="this.src='https://placeholder.im/300x200?text=雄黄酒'">
+                    <div class="food-info">
+                        <h3 class="food-title">香糯咸鸭蛋</h3>
+                        <p class="food-description">端午节传统美食，寓意吉祥如意。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-category">
+            <h2 class="category-title">中秋节特色美食</h2>
+            <div class="food-grid">
+                <div class="food-card" data-category="moon">
+                    <div class="food-tag">必吃</div>
+                    <img src="images/mooncake.jpg" alt="月饼" onerror="this.src='https://placeholder.im/300x200?text=月饼'">
+                    <div class="food-info">
+                        <h3 class="food-title">传统月饼</h3>
+                        <p class="food-description">象征团圆的中秋传统美食，有五仁、莲蓉、豆沙等多种口味。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★★★★★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+                <div class="food-card" data-category="moon">
+                    <img src="images/fruits.jpg" alt="时令水果" onerror="this.src='https://placeholder.im/300x200?text=时令水果'">
+                    <div class="food-info">
+                        <h3 class="food-title">时令水果</h3>
+                        <p class="food-description">柚子、苹果等应季水果，寓意团圆美满。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>难度：★</span>
+                        </div>
+                        <a href="#" class="recipe-button">查看食谱</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-tips">
+            <h3 class="tips-title">
+                <i class="fas fa-lightbulb"></i>
+                美食制作小贴士
+            </h3>
+            <ul class="tips-list">
+                <li>选用新鲜食材，保证口感和营养</li>
+                <li>注意火候控制，确保食物熟透</li>
+                <li>调味要适中，突出食材本味</li>
+                <li>注重摆盘，让美食更有食欲</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <p>版权所有 © 2025 节日庆祝网站</p>
+    </footer>
+
+    <script>
+        function filterFood(category) {
+            // 更新按钮状态
+            const buttons = document.querySelectorAll('.filter-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                if(button.textContent.includes(category === 'all' ? '全部' : category)) {
+                    button.classList.add('active');
+                }
+            });
+
+            // 过滤食物类别和卡片
+            const categories = document.querySelectorAll('.food-category');
+            categories.forEach(categorySection => {
+                const categoryTitle = categorySection.querySelector('.category-title').textContent;
+                if (category === 'all') {
+                    categorySection.style.display = 'block';
+                } else {
+                    // 根据类别标题判断是否显示
+                    if (categoryTitle.includes(category === 'spring' ? '春节' : 
+                        category === 'qingming' ? '清明' :
+                        category === 'labor' ? '劳动' :
+                        category === 'dragon' ? '端午' :
+                        category === 'national' ? '国庆' :
+                        category === 'moon' ? '中秋' :
+                        category === 'newyear' ? '元旦' : '')) {
+                        categorySection.style.display = 'block';
+                    } else {
+                        categorySection.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

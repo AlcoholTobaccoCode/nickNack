@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甜品专区 - 美食分享网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7f5;
+            color: #2c3e50;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2ecc71;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2ecc71;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        /* 甜品专区特定样式 */
+        .dessert-header {
+            margin-top: 80px;
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%);
+            position: relative;
+        }
+
+        .dessert-header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .dessert-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .dessert-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background-color: white;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dessert-btn:hover,
+        .dessert-btn.active {
+            background-color: #2ecc71;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .dessert-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .dessert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .dessert-card {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .dessert-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.15);
+        }
+
+        .food-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .dessert-card:hover .food-image {
+            transform: scale(1.05);
+        }
+
+        .food-info {
+            padding: 25px;
+        }
+
+        .food-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .food-desc {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .food-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .food-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .food-tag {
+            padding: 4px 12px;
+            background-color: #e8f5e9;
+            color: #2ecc71;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .recipe-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .recipe-link:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .rating {
+            display: flex;
+            gap: 2px;
+            color: #f1c40f;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .dessert-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i>
+                美食分享
+            </a>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="chinese.html">中式美食</a>
+                <a href="western.html">西式美食</a>
+                <a href="dessert.html" class="active">甜品专区</a>
+                <a href="publish.html">发布食谱</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="dessert-header">
+        <h1>甜品专区</h1>
+        <p>享受美味甜点，品味幸福时光</p>
+        <div class="dessert-nav">
+            <button class="dessert-btn active">
+                <i class="fas fa-cookie-bite"></i>
+                全部
+            </button>
+            <button class="dessert-btn">
+                <i class="fas fa-birthday-cake"></i>
+                蛋糕
+            </button>
+            <button class="dessert-btn">
+                <i class="fas fa-ice-cream"></i>
+                冰淇淋
+            </button>
+            <button class="dessert-btn">
+                <i class="fas fa-cookie"></i>
+                饼干
+            </button>
+            <button class="dessert-btn">
+                <i class="fas fa-candy-cane"></i>
+                糖果
+            </button>
+            <button class="dessert-btn">
+                <i class="fas fa-mug-hot"></i>
+                饮品
+            </button>
+        </div>
+    </section>
+
+    <main class="dessert-container">
+        <div class="dessert-grid">
+            <div class="dessert-card">
+                <img src="images/tiramisu.jpg" alt="提拉米苏" class="food-image" onerror="this.src='https://placeholder.im/300x200?text=提拉米苏'">
+                <div class="food-info">
+                    <div class="food-tags">
+                        <span class="food-tag">蛋糕</span>
+                        <span class="food-tag">意式</span>
+                    </div>
+                    <h3 class="food-title">经典提拉米苏</h3>
+                    <p class="food-desc">咖啡浸泡的手指饼干，搭配马斯卡彭奶酪霜</p>
+                    <div class="food-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-signal"></i>
+                            难度：中等
+                        </div>
+                        <div class="time">
+                            <i class="far fa-clock"></i>
+                            120分钟
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <a href="#" class="recipe-link">查看食谱</a>
+                </div>
+            </div>
+
+            <div class="dessert-card">
+                <img src="images/matcha-icecream.jpg" alt="抹茶冰淇淋" class="food-image" onerror="this.src='https://placeholder.im/300x200?text=抹茶冰淇淋'">
+                <div class="food-info">
+                    <div class="food-tags">
+                        <span class="food-tag">冰淇淋</span>
+                        <span class="food-tag">日式</span>
+                    </div>
+                    <h3 class="food-title">抹茶冰淇淋</h3>
+                    <p class="food-desc">浓郁抹茶风味，搭配红豆馅料</p>
+                    <div class="food-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-signal"></i>
+                            难度：较难
+                        </div>
+                        <div class="time">
+                            <i class="far fa-clock"></i>
+                            180分钟
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <a href="#" class="recipe-link">查看食谱</a>
+                </div>
+            </div>
+
+            <div class="dessert-card">
+                <img src="images/cookies.jpg" alt="巧克力曲奇" class="food-image" onerror="this.src='https://placeholder.im/300x200?text=巧克力曲奇'">
+                <div class="food-info">
+                    <div class="food-tags">
+                        <span class="food-tag">饼干</span>
+                        <span class="food-tag">美式</span>
+                    </div>
+                    <h3 class="food-title">巧克力曲奇</h3>
+                    <p class="food-desc">香脆可口的巧克力豆曲奇饼干</p>
+                    <div class="food-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-signal"></i>
+                            难度：简单
+                        </div>
+                        <div class="time">
+                            <i class="far fa-clock"></i>
+                            45分钟
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <a href="#" class="recipe-link">查看食谱</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 甜品分类切换
+        document.querySelectorAll('.dessert-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.dessert-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html> 

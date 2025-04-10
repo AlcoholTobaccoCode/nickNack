@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节日祝福 - 节日庆祝网站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .blessing-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/blessing-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+        }
+
+        .blessing-banner h1 {
+            color: white;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .blessing-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .blessing-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #ff4d4d;
+            outline: none;
+        }
+
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .blessing-templates {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff9f9;
+            border-radius: 8px;
+        }
+
+        .template-title {
+            color: #ff4d4d;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .template-button {
+            background-color: white;
+            border: 2px solid #ff4d4d;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #ff4d4d;
+            transition: all 0.3s;
+        }
+
+        .template-button:hover {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .card-styles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .card-style {
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card-style:hover,
+        .card-style.active {
+            border-color: #ff4d4d;
+            background-color: #fff9f9;
+        }
+
+        .card-style img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .submit-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-button:hover {
+            background-color: #ff3333;
+        }
+
+        .preview-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .preview-card.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="custom.html">节日习俗</a></li>
+                <li><a href="food.html">节日美食</a></li>
+                <li><a href="activity.html">节日活动</a></li>
+                <li><a href="blessing.html" class="active">节日祝福</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="blessing-banner">
+        <h1>节日祝福</h1>
+        <p>传递温暖，分享祝福</p>
+    </div>
+
+    <main>
+        <div class="blessing-container">
+            <form class="blessing-form" id="blessingForm">
+                <div class="form-group">
+                    <label for="festival">选择节日</label>
+                    <select id="festival" name="festival" onchange="updateTemplates()">
+                        <option value="spring">春节</option>
+                        <option value="qingming">清明节</option>
+                        <option value="labor">劳动节</option>
+                        <option value="dragon">端午节</option>
+                        <option value="national">国庆节</option>
+                        <option value="moon">中秋节</option>
+                        <option value="newyear">元旦</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="to">收件人</label>
+                    <input type="text" id="to" name="to" placeholder="请输入收件人姓名" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="from">发件人</label>
+                    <input type="text" id="from" name="from" placeholder="请输入您的姓名" required>
+                </div>
+
+                <div class="blessing-templates">
+                    <div class="template-title">
+                        <i class="fas fa-magic"></i>
+                        <span>祝福语模板</span>
+                    </div>
+                    <div id="templateButtons"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">祝福语</label>
+                    <textarea id="message" name="message" placeholder="请输入您的祝福语，或从上方选择模板" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>选择贺卡样式</label>
+                    <div class="card-styles" id="cardStyles">
+                        <div class="card-style active" data-style="traditional">
+                            <img src="images/card-1.jpg" alt="传统贺卡" onerror="this.src='https://placeholder.im/150x100?text=传统贺卡'">
+                            <p>传统贺卡</p>
+                        </div>
+                        <div class="card-style" data-style="modern">
+                            <img src="images/card-2.jpg" alt="现代贺卡" onerror="this.src='https://placeholder.im/150x100?text=现代贺卡'">
+                            <p>现代贺卡</p>
+                        </div>
+                        <div class="card-style" data-style="cute">
+                            <img src="images/card-3.jpg" alt="可爱贺卡" onerror="this.src='https://placeholder.im/150x100?text=可爱贺卡'">
+                            <p>可爱贺卡</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-paper-plane"></i>
+                    发送祝福
+                </button>
+            </form>
+
+            <div class="preview-card" id="previewCard"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>版权所有 © 2025 节日庆祝网站</p>
+    </footer>
+
+    <script>
+        const templates = {
+            spring: [
+                "愿您春节快乐，阖家幸福安康！新的一年万事如意，财运亨通！",
+                "祝您新春大吉，身体健康，事业腾飞，阖家欢乐！",
+                "恭贺新春，愿您福星高照，万事顺遂，阖家幸福美满！"
+            ],
+            qingming: [
+                "清明时节，愿您踏青愉快，感受春天的气息！",
+                "在这追思的日子里，愿您平安喜乐，生活美满！",
+                "清明佳节，愿您身心愉悦，万事如意！"
+            ],
+            labor: [
+                "劳动节快乐！愿您工作顺心，收获满满！",
+                "五一佳节，祝您假期愉快，身心放松！",
+                "向劳动者致敬！祝您节日快乐，前程似锦！"
+            ],
+            dragon: [
+                "端午安康！愿您身体健康，平安吉祥！",
+                "祝您端午节快乐，身心康泰，阖家安康！",
+                "端午佳节，愿您平安喜乐，幸福安康！"
+            ],
+            national: [
+                "祝您国庆节快乐！祖国繁荣昌盛，人民幸福安康！",
+                "国庆佳节，祝您假期愉快，阖家欢乐！",
+                "祝愿祖国繁荣富强，祝您节日快乐！"
+            ],
+            moon: [
+                "中秋佳节，愿您阖家团圆，幸福美满！",
+                "但愿人长久，千里共婵娟。祝您中秋快乐！",
+                "月圆人团圆，祝您中秋节快乐，合家欢乐！"
+            ],
+            newyear: [
+                "新年快乐！愿您新的一年心想事成，万事如意！",
+                "祝您元旦快乐，新的一年平安喜乐！",
+                "元旦佳节，祝您新年新气象，事事顺心！"
+            ]
+        };
+
+        function updateTemplates() {
+            const festival = document.getElementById('festival').value;
+            const templateButtons = document.getElementById('templateButtons');
+            templateButtons.innerHTML = '';
+            
+            templates[festival].forEach(template => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'template-button';
+                button.textContent = template;
+                button.onclick = () => fillTemplate(template);
+                templateButtons.appendChild(button);
+            });
+        }
+
+        function fillTemplate(text) {
+            document.getElementById('message').value = text;
+        }
+
+        // 贺卡样式选择
+        document.querySelectorAll('.card-style').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.card-style').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+
+        // 表单提交处理
+        document.getElementById('blessingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const previewCard = document.getElementById('previewCard');
+            const to = document.getElementById('to').value;
+            const from = document.getElementById('from').value;
+            const message = document.getElementById('message').value;
+            const selectedStyle = document.querySelector('.card-style.active').dataset.style;
+            
+            // 预览
+            previewCard.innerHTML = `
+                <h3>祝福预览</h3>
+                <div class="preview-content" style="padding: 20px; background-color: ${selectedStyle === 'traditional' ? '#fff9f9' : selectedStyle === 'modern' ? '#f0f8ff' : '#fff0f5'}">
+                    <p>亲爱的 ${to}：</p>
+                    <p style="margin: 20px 0;">${message}</p>
+                    <p style="text-align: right;">祝好</p>
+                    <p style="text-align: right;">${from}</p>
+                </div>
+            `;
+            previewCard.classList.add('show');
+
+            setTimeout(() => {
+                alert('祝福已发送！');
+                this.reset();
+                previewCard.classList.remove('show');
+                updateTemplates();
+            }, 1000);
+        });
+
+        // 初始化模板
+        updateTemplates();
+    </script>
+</body>
+</html> 

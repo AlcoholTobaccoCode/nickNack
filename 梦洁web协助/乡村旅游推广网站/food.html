@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特色美食 - 五泄风景区</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 复用基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* Header styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2B4C7E;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2B4C7E;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        /* 美食页面特定样式 */
+        .food-banner {
+            height: 60vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('images/food-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .banner-content {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .banner-content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .banner-content p {
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .food-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: #2B4C7E;
+            border-radius: 2px;
+        }
+
+        .food-filter {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-button {
+            padding: 10px 25px;
+            border: 2px solid #2B4C7E;
+            border-radius: 25px;
+            background: none;
+            color: #2B4C7E;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .filter-button:hover,
+        .filter-button.active {
+            background: #2B4C7E;
+            color: white;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(43, 76, 126, 0.15);
+        }
+
+        .food-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .food-card:hover .food-image {
+            transform: scale(1.05);
+        }
+
+        .food-content {
+            padding: 20px;
+        }
+
+        .food-content h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .food-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .food-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: #2B4C7E;
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .food-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .food-rating {
+            color: #ffc107;
+        }
+
+        .recipe-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #2B4C7E;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .recipe-link:hover {
+            background-color: #388e3c;
+            transform: translateY(-2px);
+        }
+
+        .tips-section {
+            background: #e8f5e9;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+        }
+
+        .tips-title {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tips-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .tips-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .tips-list li::before {
+            content: '✓';
+            color: #2B4C7E;
+            position: absolute;
+            left: 0;
+        }
+
+        /* 移动端样式 */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-nav.active {
+                display: block;
+            }
+
+            .food-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-button {
+                font-size: 14px;
+                padding: 8px 20px;
+            }
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-section a:hover {
+            color: #2B4C7E;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #2B4C7E;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tree"></i>
+                乡村旅游
+            </a>
+            <button class="mobile-nav-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="scenic.html">景点介绍</a>
+                <a href="culture.html">民俗文化</a>
+                <a href="food.html" class="active">特色美食</a>
+                <a href="booking.html">行程预订</a>
+            </nav>
+        </div>
+        <div class="mobile-nav">
+            <a href="index.html">首页</a>
+            <a href="scenic.html">景点介绍</a>
+            <a href="culture.html">民俗文化</a>
+            <a href="food.html" class="active">特色美食</a>
+            <a href="booking.html">行程预订</a>
+        </div>
+    </header>
+
+    <section class="food-banner">
+        <div class="banner-content">
+            <h1>五泄特色美食</h1>
+            <p>品味地道农家菜，感受舌尖上的乡村味道</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <section class="food-section">
+            <h2 class="section-title">美食分类</h2>
+            <div class="food-filter">
+                <button class="filter-button active">全部</button>
+                <button class="filter-button">农家特色</button>
+                <button class="filter-button">地方小吃</button>
+                <button class="filter-button">时令野味</button>
+                <button class="filter-button">特色甜点</button>
+            </div>
+            <div class="food-grid">
+                <div class="food-card">
+                    <img src="images/food1.jpg" alt="农家土菜" class="food-image" onerror="this.src='https://placeholder.im/400x300?text=农家土菜'">
+                    <div class="food-content">
+                        <div class="food-tags">
+                            <span class="food-tag">农家特色</span>
+                            <span class="food-tag">当季</span>
+                        </div>
+                        <h3>农家土菜</h3>
+                        <p>采用当地新鲜食材，传统烹饪方法，原汁原味。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span>推荐指数：4.5</span>
+                        </div>
+                        <a href="#" class="recipe-link">查看详情</a>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <img src="images/food2.jpg" alt="野生菌汤" class="food-image" onerror="this.src='https://placeholder.im/400x300?text=野生菌汤'">
+                    <div class="food-content">
+                        <div class="food-tags">
+                            <span class="food-tag">时令野味</span>
+                            <span class="food-tag">养生</span>
+                        </div>
+                        <h3>野生菌汤</h3>
+                        <p>采用当地野生菌菇，营养丰富，滋补养生。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>推荐指数：5.0</span>
+                        </div>
+                        <a href="#" class="recipe-link">查看详情</a>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <img src="images/food3.jpg" alt="手工糕点" class="food-image" onerror="this.src='https://placeholder.im/400x300?text=手工糕点'">
+                    <div class="food-content">
+                        <div class="food-tags">
+                            <span class="food-tag">特色甜点</span>
+                            <span class="food-tag">手工</span>
+                        </div>
+                        <h3>手工糕点</h3>
+                        <p>传统工艺制作，口感细腻，香甜可口。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span>推荐指数：4.0</span>
+                        </div>
+                        <a href="#" class="recipe-link">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="food-section">
+            <h2 class="section-title">特色推荐</h2>
+            <div class="food-grid">
+                <div class="food-card">
+                    <img src="images/food4.jpg" alt="农家小炒" class="food-image" onerror="this.src='https://placeholder.im/400x300?text=农家小炒'">
+                    <div class="food-content">
+                        <div class="food-tags">
+                            <span class="food-tag">农家特色</span>
+                            <span class="food-tag">热销</span>
+                        </div>
+                        <h3>农家小炒</h3>
+                        <p>新鲜时蔬，现炒现卖，家常美味。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>推荐指数：5.0</span>
+                        </div>
+                        <a href="#" class="recipe-link">查看详情</a>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <img src="images/food5.jpg" alt="特色小吃" class="food-image" onerror="this.src='https://placeholder.im/400x300?text=特色小吃'">
+                    <div class="food-content">
+                        <div class="food-tags">
+                            <span class="food-tag">地方小吃</span>
+                            <span class="food-tag">人气</span>
+                        </div>
+                        <h3>特色小吃</h3>
+                        <p>地道风味，传统工艺，回味无穷。</p>
+                        <div class="food-meta">
+                            <div class="food-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span>推荐指数：4.5</span>
+                        </div>
+                        <a href="#" class="recipe-link">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="food-section">
+            <h2 class="section-title">美食小贴士</h2>
+            <div class="tips-section">
+                <h3 class="tips-title">
+                    <i class="fas fa-lightbulb"></i>
+                    品尝建议
+                </h3>
+                <ul class="tips-list">
+                    <li>建议选择当季食材，口感更好</li>
+                    <li>可以请店家推荐特色菜品</li>
+                    <li>注意食材的新鲜程度</li>
+                    <li>建议提前预订热门菜品</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> 公司简介</a></li>
+                    <li><a href="#"><i class="fas fa-history"></i> 联系方式</a></li>
+                    <li><a href="#"><i class="fas fa-award"></i> 加入我们</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>旅游服务</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-route"></i> 行程定制</a></li>
+                    <li><a href="#"><i class="fas fa-hotel"></i> 住宿预订</a></li>
+                    <li><a href="#"><i class="fas fa-user-tie"></i> 导游服务</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>帮助中心</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-book"></i> 预订指南</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> 常见问题</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> 安全须知</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> 咨询电话：0575-XXXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> 邮箱：info@wuxie.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 地址：浙江省绍兴市诸暨市五泄镇</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-douyin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>版权所有 © 2024 五泄风景区</p>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端导航菜单
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        mobileNavToggle.addEventListener('click', function() {
+            mobileNav.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (mobileNav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // 美食分类切换
+        const filterButtons = document.querySelectorAll('.filter-button');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>民俗文化 - 五泄风景区</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 复用基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* Header styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2B4C7E;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2B4C7E;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        /* 文化页面特定样式 */
+        .culture-banner {
+            height: 60vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('images/culture-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .banner-content {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .banner-content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .banner-content p {
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .culture-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: #2B4C7E;
+            border-radius: 2px;
+        }
+
+        .culture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .culture-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .culture-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .culture-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .culture-content {
+            padding: 20px;
+        }
+
+        .culture-content h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: #2B4C7E;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #2B4C7E;
+            border: 4px solid #fff;
+            border-radius: 50%;
+            top: 15px;
+            right: -10px;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-content h3 {
+            color: #2B4C7E;
+            margin-bottom: 10px;
+        }
+
+        .festival-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .festival-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .festival-icon {
+            font-size: 40px;
+            color: #2B4C7E;
+            margin-bottom: 20px;
+        }
+
+        /* 移动端样式 */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-nav.active {
+                display: block;
+            }
+
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-item::after {
+                left: 21px;
+            }
+
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-section a:hover {
+            color: #2B4C7E;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #2B4C7E;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tree"></i>
+                乡村旅游
+            </a>
+            <button class="mobile-nav-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="scenic.html">景点介绍</a>
+                <a href="culture.html" class="active">民俗文化</a>
+                <a href="food.html">特色美食</a>
+                <a href="booking.html">行程预订</a>
+            </nav>
+        </div>
+        <div class="mobile-nav">
+            <a href="index.html">首页</a>
+            <a href="scenic.html">景点介绍</a>
+            <a href="culture.html" class="active">民俗文化</a>
+            <a href="food.html">特色美食</a>
+            <a href="booking.html">行程预订</a>
+        </div>
+    </header>
+
+    <section class="culture-banner">
+        <div class="banner-content">
+            <h1>五泄民俗文化</h1>
+            <p>探索千年文化底蕴，感受民俗风情魅力</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <section class="culture-section">
+            <h2 class="section-title">文化历史</h2>
+            <p>五泄风景区历史悠久，文化底蕴深厚。早在二千多年前就已闻名，东汉《越绝书》、北魏《水经注》、唐代《隋书》等古籍中都有记载。</p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>唐代</h3>
+                        <p>五台山高僧灵默禅师创建五泄禅寺，开启佛教文化传承。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>宋代</h3>
+                        <p>杨万里等文人墨客游历五泄，留下众多诗文佳作。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>明代</h3>
+                        <p>画家陈洪绶在此写生作画，留下珍贵艺术遗产。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>现代</h3>
+                        <p>成为国家级风景名胜区，文化旅游蓬勃发展。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="culture-section">
+            <h2 class="section-title">民俗特色</h2>
+            <div class="culture-grid">
+                <div class="culture-card">
+                    <img src="images/temple-fair.jpg" alt="庙会文化" class="culture-image" onerror="this.src='https://placeholder.im/400x300/?text=庙会文化'">
+                    <div class="culture-content">
+                        <h3>庙会文化</h3>
+                        <p>五泄禅寺每年举办传统庙会，香火鼎盛，游客络绎不绝。</p>
+                    </div>
+                </div>
+                <div class="culture-card">
+                    <img src="images/folk-art.jpg" alt="民间艺术" class="culture-image" onerror="this.src='https://placeholder.im/400x300/?text=民间艺术'">
+                    <div class="culture-content">
+                        <h3>民间艺术</h3>
+                        <p>传统手工艺、民间戏曲等艺术形式丰富多彩。</p>
+                    </div>
+                </div>
+                <div class="culture-card">
+                    <img src="images/local-customs.jpg" alt="乡土习俗" class="culture-image" onerror="this.src='https://placeholder.im/400x300/?text=乡土习俗'">
+                    <div class="culture-content">
+                        <h3>乡土习俗</h3>
+                        <p>保留了独特的地方习俗和生活方式。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="culture-section">
+            <h2 class="section-title">传统节庆</h2>
+            <div class="festival-section">
+                <div class="festival-card">
+                    <div class="festival-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h3>五泄禅寺庙会</h3>
+                    <p>农历正月十五举办，是当地最重要的传统节庆活动。</p>
+                </div>
+                <div class="festival-card">
+                    <div class="festival-icon">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <h3>龙舟文化节</h3>
+                    <p>端午节期间在五泄湖举办龙舟赛事。</p>
+                </div>
+                <div class="festival-card">
+                    <div class="festival-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3>登山节</h3>
+                    <p>每年秋季举办，吸引众多登山爱好者参与。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> 公司简介</a></li>
+                    <li><a href="#"><i class="fas fa-history"></i> 联系方式</a></li>
+                    <li><a href="#"><i class="fas fa-award"></i> 加入我们</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>旅游服务</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-route"></i> 行程定制</a></li>
+                    <li><a href="#"><i class="fas fa-hotel"></i> 住宿预订</a></li>
+                    <li><a href="#"><i class="fas fa-user-tie"></i> 导游服务</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>帮助中心</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-book"></i> 预订指南</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> 常见问题</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> 安全须知</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> 咨询电话：0575-XXXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> 邮箱：info@wuxie.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 地址：浙江省绍兴市诸暨市五泄镇</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-douyin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>版权所有 © 2024 五泄风景区</p>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端导航菜单
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        mobileNavToggle.addEventListener('click', function() {
+            mobileNav.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (mobileNav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    </script>
+</body>
+</html> 

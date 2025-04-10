@@ -1,0 +1,82 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-12-12 23:33:07
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-12-12 23:56:02
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Watermarking Example</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="200" height="200"></canvas>
+    <div id="watermark"></div>
+
+    <script>
+        function hash(text) {
+            var hash = 0, i, chr;
+            if (text.length === 0) return hash;
+            for (i = 0; i < text.length; i++) {
+                chr = text.charCodeAt(i);
+                hash = ((hash << 5) - hash) + chr;
+                hash |= 0;
+            }
+            return hash;
+        }
+
+        function embedWatermark(image, hashValue) {
+            var pixels = image.data;
+            var pixelIndex = 0;
+            for (var i = 0; i < 32; i++) {
+                var bitValue = (hashValue >> i) & 1;
+                var pixelValue = pixels[pixelIndex];
+                var newPixelValue = pixelValue & 254 | bitValue;
+                pixels[pixelIndex] = newPixelValue;
+                pixelIndex += 4;
+            }
+        }
+
+        function extractWatermark(image) {
+            var pixels = image.data;
+            var pixelIndex = 0;
+            var hashValue = 0;
+            for (var i = 0; i < 32; i++) {
+                var bitValue = pixels[pixelIndex] & 1;
+                hashValue |= bitValue << i;
+                pixelIndex += 4;
+            }
+            return hashValue;
+        }
+
+        // var canvas = document.getElementById("canvas");
+        // var context = canvas.getContext("2d");
+        // var image = new Image();
+        // image.src = './1.png';
+        // image.onload = function () {
+        //     canvas.width = image.width;
+        //     canvas.height = image.height;
+        //     context.drawImage(image, 0, 0);
+        //     var watermark = "啊打发报道NSF那里是看能否卢卡斯能否考虑!";
+        //     var hashValue = hash(watermark)
+        //     // getImageData 提取图片像素信息
+        //     var imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+        //     embedWatermark(imageData, hashValue);
+        //     // putImageData 重新绘制imageData
+        //     context.putImageData(imageData, 0, 0);
+        //     var extractedWatermarkValue = extractWatermark(context.getImageData(0, 0, canvas.width, canvas.height), hashValue);
+        //     document.getElementById('watermark').innerHTML = `
+        //     watermark : ${watermark} </br>
+        //     embed hash value : " + ${hashValue} </br>
+        //     extracted watermark hash value : ${extractedWatermarkValue}
+        //     `
+        // };
+
+    </script>
+</body>
+
+</html>
+

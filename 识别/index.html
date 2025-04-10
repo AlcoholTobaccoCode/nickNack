@@ -1,0 +1,48 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-11-28 22:49:30
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-11-28 22:49:36
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR with Tesseract.js</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <h1>OCR with Tesseract.js</h1>
+  <textarea id="base64Image" rows="10" cols="50" placeholder="Paste your Base64 image here..."></textarea><br>
+  <button onclick="recognizeText()">Recognize Text</button>
+  <div id="result"></div>
+
+  <script>
+    async function recognizeText() {
+      const base64Image = document.getElementById('base64Image').value;
+      if (!base64Image) {
+        alert('Please paste a Base64 image.');
+        return;
+      }
+
+      try {
+        // Create a new Tesseract instance
+        const result = await Tesseract.recognize(
+          base64Image,
+          'eng', // Language code (e.g., 'eng' for English)
+          { logger: m => console.log(m) } // Optional: Log progress
+        );
+
+        // Display the recognized text
+        const resultElement = document.getElementById('result');
+        resultElement.innerHTML = `<pre>${result.data.text}</pre>`;
+      } catch (err) {
+        console.error(err);
+        alert('Error recognizing text. Please check the image and try again.');
+      }
+    }
+  </script>
+</body>
+</html>

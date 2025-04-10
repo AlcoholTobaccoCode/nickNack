@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西式美食 - 美食分享网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7f5;
+            color: #2c3e50;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2ecc71;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2ecc71;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        /* 西式美食页面特定样式 */
+        .western-header {
+            margin-top: 80px;
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%);
+            position: relative;
+        }
+
+        .western-header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .country-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .country-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background-color: white;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .country-btn img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .country-btn:hover,
+        .country-btn.active {
+            background-color: #2ecc71;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .western-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .western-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .western-card {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .western-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.15);
+        }
+
+        .food-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .western-card:hover .food-image {
+            transform: scale(1.05);
+        }
+
+        .food-info {
+            padding: 25px;
+        }
+
+        .food-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .food-desc {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .food-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .food-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .food-tag {
+            padding: 4px 12px;
+            background-color: #e8f5e9;
+            color: #2ecc71;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .recipe-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .recipe-link:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .western-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i>
+                美食分享
+            </a>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="chinese.html">中式美食</a>
+                <a href="western.html" class="active">西式美食</a>
+                <a href="dessert.html">甜品专区</a>
+                <a href="publish.html">发布食谱</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="western-header">
+        <h1>西式美食</h1>
+        <p>探索世界各地的美食文化，品味异国风情</p>
+        <div class="country-nav">
+            <button class="country-btn active">
+                <i class="fas fa-globe"></i>
+                全部
+            </button>
+            <button class="country-btn">
+                <i class="fas fa-flag"></i>
+                意大利
+            </button>
+            <button class="country-btn">
+                <i class="fas fa-flag"></i>
+                法国
+            </button>
+            <button class="country-btn">
+                <i class="fas fa-flag"></i>
+                美国
+            </button>
+            <button class="country-btn">
+                <i class="fas fa-flag"></i>
+                西班牙
+            </button>
+            <button class="country-btn">
+                <i class="fas fa-flag"></i>
+                希腊
+            </button>
+        </div>
+    </section>
+
+    <main class="western-container">
+        <div class="western-grid">
+            <div class="western-card">
+                <img src="images/pizza.jpg" alt="意式披萨" class="food-image" onerror="this.src='https://placeholder.im/300x200?text=意式披萨'">
+                <div class="food-info">
+                    <div class="food-tags">
+                        <span class="food-tag">意大利</span>
+                        <span class="food-tag">经典</span>
+                    </div>
+                    <h3 class="food-title">玛格丽特披萨</h3>
+                    <p class="food-desc">传统意式手工披萨，番茄酱底配水牛奶酪</p>
+                    <div class="food-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-signal"></i>
+                            难度：中等
+                        </div>
+                        <div class="time">
+                            <i class="far fa-clock"></i>
+                            90分钟
+                        </div>
+                    </div>
+                    <a href="#" class="recipe-link">查看食谱</a>
+                </div>
+            </div>
+
+            <div class="western-card">
+                <img src="images/steak.jpg" alt="牛排" class="food-image" onerror="this.src='https://placeholder.im/300x200?text=牛排'">
+                <div class="food-info">
+                    <div class="food-tags">
+                        <span class="food-tag">美国</span>
+                        <span class="food-tag">主食</span>
+                    </div>
+                    <h3 class="food-title">煎牛排</h3>
+                    <p class="food-desc">完美的五分熟牛排，搭配黑胡椒酱汁</p>
+                    <div class="food-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-signal"></i>
+                            难度：较难
+                        </div>
+                        <div class="time">
+                            <i class="far fa-clock"></i>
+                            30分钟
+                        </div>
+                    </div>
+                    <a href="#" class="recipe-link">查看食谱</a>
+                </div>
+            </div>
+
+            <div class="western-card">
+                <img src="images/ratatouille.jpg" alt="普罗旺斯炖菜" class="food-image" onerror="this.src='https://placeholder.im/300x200?text=普罗旺斯炖菜'">
+                <div class="food-info">
+                    <div class="food-tags">
+                        <span class="food-tag">法国</span>
+                        <span class="food-tag">素食</span>
+                    </div>
+                    <h3 class="food-title">普罗旺斯炖菜</h3>
+                    <p class="food-desc">经典法式蔬菜炖菜，健康美味</p>
+                    <div class="food-meta">
+                        <div class="difficulty">
+                            <i class="fas fa-signal"></i>
+                            难度：中等
+                        </div>
+                        <div class="time">
+                            <i class="far fa-clock"></i>
+                            60分钟
+                        </div>
+                    </div>
+                    <a href="#" class="recipe-link">查看食谱</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 国家分类切换
+        document.querySelectorAll('.country-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.country-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html> 

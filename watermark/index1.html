@@ -1,0 +1,150 @@
+<!--
+ * @Description: 
+ * @Author: duqings duqings@foxmail.com
+ * @Date: 2024-12-12 23:33:07
+ * @LastEditors: duqings duqings@foxmail.com
+ * @LastEditTime: 2024-12-13 11:22:25
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Watermarking Example</title>
+
+    <style>
+        #watermark {
+            width: 1000px;
+            height: 1000px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="watermark"></div>
+
+    <button id="btn"></button>
+
+    <script>
+        function mergeData(rawImageSrc, watermarkImageSrc) {
+            return new Promise((resolve, reject) => {
+                const img = new Image()
+                img.onload = function () {
+                    const myCanvas = document.createElement("canvas");
+                    myCanvas.width = img.width;
+                    myCanvas.height = img.height;
+                    const ctx = myCanvas.getContext("2d")
+                    const bit = 0
+                    const offset = 3
+                    const oImageData = getImageData(rawImageSrc)
+                    const oData = oImageData.data
+                    const newData = getImageData(watermarkImageSrc).data
+                    for (let i = 0; i < oData.length; i++) {
+                        if (i % 4 === bit) {
+                            // 只修改目标通道
+                            if (newData[i + offset] === 0 && (oData[i] % 2 === 1)) {
+                                // 没有信息的像素，将目标通道的奇数像素改为偶数
+                                if (oData[i] === 255) {
+                                    oData[i]--
+                                } else {
+                                    oData[i]++
+                                }
+                            } else if (newData[i + offset] !== 0 && (oData[i] % 2 === 0)) {
+                                // 有信息的像素
+                                oData[i]++
+                            }
+                        }
+                    }
+                    ctx.putImageData(oImageData, 0, 0)
+                    resolve(myCanvas.toDataURL("image/png"))
+                }
+                img.src = rawImageSrc
+            })
+        }
+
+        function getImageData(image) {
+            const img = new Image()
+            img.src = image
+            const myCanvas = document.createElement("canvas");
+            myCanvas.width = img.width;
+            myCanvas.height = img.height;
+            const myContext = myCanvas.getContext("2d")
+            myContext.drawImage(img, 0, 0);
+            return myContext.getImageData(0, 0, myCanvas.width, myCanvas.height)
+        }
+
+        function decrypt(watermarkImage) {
+            return new Promise((resolve, reject) => {
+                const img = new Image()
+                img.onload = function () {
+
+                    const myCanvas = document.createElement("canvas");
+                    myCanvas.width = img.width;
+                    myCanvas.height = img.height;
+                    const ctx = myCanvas.getContext("2d")
+
+
+                    const imageData = getImageData(watermarkImage)
+                    var data = imageData.data;
+                    for (var i = 0; i < data.length; i++) {
+                        if (i % 4 == 0) {
+                            // 红色分量
+                            if (data[i] % 2 == 0) {
+                                data[i] = 0;
+                            } else {
+                                data[i] = 255;
+                            }
+                        } else if (i % 4 == 3) {
+                            // alpha通道不做处理
+                            continue;
+                        } else {
+                            // 关闭其他分量，不关闭也不影响答案，甚至更美观 o(^▽^)o
+                            data[i] = 0;
+                        }
+                    }
+
+                    ctx.putImageData(imageData, 0, 0)
+                    resolve(myCanvas.toDataURL("image/png"))
+                }
+
+                img.src = watermarkImage
+            })
+        }
+
+        function createBackgroundImage(content, proportion, tiltAngle) {
+            const can = document.createElement('canvas')
+            can.width = document.body.clientWidth / proportion
+            can.height = document.body.clientHeight / proportion
+            const context = can.getContext('2d')
+            context.rotate(-25 * Math.PI / 180);
+            context.font = "800 30px Microsoft JhengHei";
+            context.fillStyle = "#000";
+            context.textAlign = 'center';
+            context.textBaseline = 'Middle';
+            context.fillText(content, 100, 100)
+            console.log(context.getImageData(0, 0, can.width, can.height))
+            return can.toDataURL("image/png");
+        }
+
+        
+        const div = document.getElementById('watermark')
+        console.log('div', div)
+        div.style.backgroundImage = `url(${createBackgroundImage('伯约同学', 6, 10)})`
+
+
+        document.getElementById('btn').onclick = () => {
+            const image1 = createBackgroundImage('伯约', 3, 10)
+            const image2 = createBackgroundImage('学', 3, 10)
+            console.log('image1', image1)
+            console.log('image2', image2)
+            mergeData(image1, image2).then(res => {
+                console.log('res', res)
+                decrypt(image2).then(res => {
+                    console.log('finalImage', res)
+                })
+            })
+        }
+        
+    </script>
+</body>
+
+</html>

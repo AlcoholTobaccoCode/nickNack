@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>景点介绍 - 五泄风景区</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2B4C7E;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2B4C7E;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .scenic-banner {
+            height: 60vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('images/wuxie-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .banner-content {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .banner-content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .banner-content p {
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .intro-section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: #2B4C7E;
+            border-radius: 2px;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .highlight-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .highlight-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .highlight-content {
+            padding: 20px;
+        }
+
+        .highlight-content h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .season-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .season-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .season-card h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .info-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-list li::before {
+            content: '•';
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .banner-content h1 {
+                font-size: 2em;
+            }
+            
+            .intro-section {
+                padding: 20px;
+            }
+        }
+
+        /* 添加移动端导航菜单样式 */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        /* 完善底部样式 */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: #2B4C7E;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-section a:hover {
+            color: #2B4C7E;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #2B4C7E;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-nav.active {
+                display: block;
+            }
+            
+            .banner-content h1 {
+                font-size: 2em;
+            }
+            
+            .intro-section {
+                padding: 20px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-section a {
+                justify-content: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .contact-info p {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tree"></i>
+                乡村旅游
+            </a>
+            <button class="mobile-nav-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="scenic.html" class="active">景点介绍</a>
+                <a href="culture.html">民俗文化</a>
+                <a href="food.html">特色美食</a>
+                <a href="booking.html">行程预订</a>
+            </nav>
+        </div>
+        <div class="mobile-nav">
+            <a href="index.html">首页</a>
+            <a href="scenic.html" class="active">景点介绍</a>
+            <a href="culture.html">民俗文化</a>
+            <a href="food.html">特色美食</a>
+            <a href="booking.html">行程预订</a>
+        </div>
+    </header>
+
+    <section class="scenic-banner">
+        <div class="banner-content">
+            <h1>五泄风景区</h1>
+            <p>国家AAAA级旅游区 | 国家级森林公园 | 国家重点风景名胜区</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <section class="intro-section">
+            <h2 class="section-title">景区概况</h2>
+            <p>五泄风景区位于浙江省绍兴市诸暨市西北23公里处的五泄镇，总面积50平方公里。景区以"72峰、36坪、25崖、10石、5瀑、3谷、2溪、1湖"构成了天然的山水画卷，素有"小雁荡"之称。</p>
+            <p>景区由五泄湖、桃源、五泄禅寺、五泄瀑布群、西源生态峡谷等景点组成，以"奇峰、峻壁、急瀑、幽潭"四大奇观闻名，为江南独有的自然景观。</p>
+            <div class="info-list">
+                <li>景区内拥有野生动物约70科300多种</li>
+                <li>木本植物400多种，草本植物600多种</li>
+                <li>2018年发现的中华水韭被誉为"植物界的大熊猫"</li>
+                <li>拥有快艇12艘，画舫船5艘，可同时接待大量游客</li>
+            </div>
+        </section>
+
+        <section class="intro-section">
+            <h2 class="section-title">景区亮点</h2>
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <img src="images/waterfall.jpg" alt="五泄瀑布" class="highlight-image" onerror="this.src='https://placeholder.im/400x300?text=五泄瀑布'">
+                    <div class="highlight-content">
+                        <h3>五泄瀑布群</h3>
+                        <p>由五道瀑布组成，气势磅礴，水声轰鸣，蔚为壮观。</p>
+                    </div>
+                </div>
+                <div class="highlight-card">
+                    <img src="images/temple.jpg" alt="五泄禅寺" class="highlight-image" onerror="this.src='https://placeholder.im/400x300?text=五泄禅寺'">
+                    <div class="highlight-content">
+                        <h3>五泄禅寺</h3>
+                        <p>始建于唐代，由高僧灵默禅师创建，佛教曹洞宗创始人良价曾在此出家。</p>
+                    </div>
+                </div>
+                <div class="highlight-card">
+                    <img src="images/lake.jpg" alt="五泄湖" class="highlight-image" onerror="this.src='https://placeholder.im/400x300?text=五泄湖'">
+                    <div class="highlight-content">
+                        <h3>五泄湖</h3>
+                        <p>湖水清澈，倒映群山，是游船观光的绝佳去处。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="intro-section">
+            <h2 class="section-title">四季风光</h2>
+            <div class="season-section">
+                <div class="season-card">
+                    <h3><i class="fas fa-seedling"></i> 春季风光</h3>
+                    <p>春天的五泄山景物复苏，满山植被焕发新绿，杜鹃、玉兰、山兰、桃花、梨花竞相绽放，空气中弥漫着花香，禽鸟吟唱，生机盎然。</p>
+                </div>
+                <div class="season-card">
+                    <h3><i class="fas fa-sun"></i> 夏季风光</h3>
+                    <p>夏季植被繁茂，古木参天，层层叠翠。水源充足，空气湿润，晨雾暮霭缭绕峰峦，是避暑纳凉的理想去处。</p>
+                </div>
+                <div class="season-card">
+                    <h3><i class="fas fa-leaf"></i> 秋季风光</h3>
+                    <p>秋季层林尽染，银杏林金黄似火，枫林红似霞，与常青树林和竹林相映成趣，构成绚丽多彩的秋日画卷。</p>
+                </div>
+                <div class="season-card">
+                    <h3><i class="fas fa-snowflake"></i> 冬季风光</h3>
+                    <p>冬季银装素裹，瀑布结冰，雾凇晶莹，特别是西源峡谷常有"千树万树梨花开"的美景，宛如琉璃世界。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="intro-section">
+            <h2 class="section-title">交通信息</h2>
+            <div class="info-list">
+                <li>位置：浙江省绍兴市诸暨市西北23公里处</li>
+                <li>自驾：导航"五泄风景区"即可到达</li>
+                <li>公交：诸暨市区乘坐公交车到五泄镇</li>
+                <li>景区内设有停车场、游客中心等配套设施</li>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> 公司简介</a></li>
+                    <li><a href="#"><i class="fas fa-history"></i> 联系方式</a></li>
+                    <li><a href="#"><i class="fas fa-award"></i> 加入我们</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>旅游服务</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-route"></i> 行程定制</a></li>
+                    <li><a href="#"><i class="fas fa-hotel"></i> 住宿预订</a></li>
+                    <li><a href="#"><i class="fas fa-user-tie"></i> 导游服务</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>帮助中心</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-book"></i> 预订指南</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> 常见问题</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> 安全须知</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> 咨询电话：0575-XXXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> 邮箱：info@wuxie.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 地址：浙江省绍兴市诸暨市五泄镇</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-qq"></i></a>
+                    <a href="#"><i class="fab fa-douyin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>版权所有 © 2024 五泄风景区</p>
+        </div>
+    </footer>
+
+    <script>
+        // 处理导航栏透明效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.remove('transparent');
+            } else {
+                header.classList.add('transparent');
+            }
+        });
+
+        // 移动端导航菜单
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        mobileNavToggle.addEventListener('click', function() {
+            mobileNav.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (mobileNav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // 全景图片轮播
+        const slides = document.querySelectorAll('.hero-slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        // 每5秒切换一次图片
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html> 

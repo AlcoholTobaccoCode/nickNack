@@ -1,0 +1,126 @@
+/* 重置默认样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+    background-color: #f5f5f5;
+}
+
+/* 导航栏样式 */
+.nav-menu {
+    background-color: #ff4d4d;
+    padding: 15px 0;
+}
+
+.nav-menu ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    background-color: #ff3333;
+}
+
+/* 主要内容区域 */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.welcome-section {
+    text-align: center;
+    padding: 50px 0;
+}
+
+h1 {
+    color: #ff4d4d;
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+/* 节日卡片样式 */
+.festival-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.festival-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.festival-card:hover {
+    transform: translateY(-5px);
+}
+
+.festival-card h3 {
+    color: #ff4d4d;
+    margin-bottom: 10px;
+}
+
+/* 灯笼动画 */
+.festival-animation {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin: 30px 0;
+}
+
+.lantern {
+    width: 50px;
+    height: 70px;
+    background-color: #ff4d4d;
+    border-radius: 25px;
+    position: relative;
+    animation: swing 3s infinite ease-in-out;
+}
+
+.lantern:before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    width: 10px;
+    height: 10px;
+    background-color: #ffeb3b;
+    border-radius: 50%;
+}
+
+@keyframes swing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 页脚样式 */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    margin-top: 50px;
+} 

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节日习俗 - 节日庆祝网站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/custom-banner.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero-banner h1 {
+            color: white;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .custom-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .custom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .custom-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .custom-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .custom-content {
+            padding: 25px;
+        }
+
+        .custom-content h3 {
+            color: #ff4d4d;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .custom-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .custom-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .custom-list li:before {
+            content: "•";
+            color: #ff4d4d;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+        }
+
+        .info-box {
+            background-color: #fff3f3;
+            border-left: 4px solid #ff4d4d;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .custom-tabs {
+            margin: 40px 0;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .fun-fact {
+            background-color: #fff9e6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .fun-fact i {
+            color: #ffc107;
+            margin-right: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: #ff4d4d;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            border-radius: 50%;
+            right: -10px;
+            top: 15px;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="custom.html" class="active">节日习俗</a></li>
+                <li><a href="food.html">节日美食</a></li>
+                <li><a href="activity.html">节日活动</a></li>
+                <li><a href="blessing.html">节日祝福</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero-banner">
+        <h1>传统节日习俗</h1>
+        <p>探索中国传统节日的丰富文化内涵</p>
+    </div>
+
+    <main class="custom-container">
+        <div class="custom-tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab('spring')">春节</button>
+                <button class="tab-button" onclick="openTab('qingming')">清明节</button>
+                <button class="tab-button" onclick="openTab('labor')">劳动节</button>
+                <button class="tab-button" onclick="openTab('dragon')">端午节</button>
+                <button class="tab-button" onclick="openTab('national')">国庆节</button>
+                <button class="tab-button" onclick="openTab('moon')">中秋节</button>
+                <button class="tab-button" onclick="openTab('newyear')">元旦</button>
+            </div>
+
+            <div id="spring" class="tab-content active">
+                <h3>春节习俗详解</h3>
+                <div class="info-box">
+                    <p>春节是中国最重要的传统节日，寓意着阖家团圆、辞旧迎新。</p>
+                </div>
+                <div class="custom-grid">
+                    <div class="custom-card">
+                        <img src="images/spring-couplets.jpg" alt="春联" onerror="this.src='https://placeholder.im/400x250?text=春联'">
+                        <div class="custom-content">
+                            <h3>贴春联</h3>
+                            <p>春联象征着新年的美好祝愿，一般在除夕前贴好。</p>
+                            <div class="fun-fact">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>你知道吗？最早的春联起源于桃符，用以驱邪避凶。</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="custom-card">
+                        <img src="images/reunion-dinner.jpg" alt="年夜饭" onerror="this.src='https://placeholder.im/400x250?text=年夜饭'">
+                        <div class="custom-content">
+                            <h3>年夜饭</h3>
+                            <p>除夕之夜全家团聚，共享丰盛的年夜饭。</p>
+                            <ul class="custom-list">
+                                <li>鱼：年年有余</li>
+                                <li>饺子：更岁交子</li>
+                                <li>长寿面：福寿绵长</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="qingming" class="tab-content">
+                <h3>清明习俗详解</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>扫墓祭祖</h3>
+                            <p>缅怀先人，整理墓地，献上鲜花与祭品。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>踏青赏春</h3>
+                            <p>外出游玩，感受春天的气息。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="labor" class="tab-content">
+                <h3>劳动节习俗</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>五一游园</h3>
+                            <p>参加各类文化活动和游园会。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>劳动表彰</h3>
+                            <p>表彰优秀劳动者，弘扬劳动精神。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dragon" class="tab-content">
+                <h3>端午习俗详解</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>赛龙舟</h3>
+                            <p>举行龙舟比赛，纪念屈原。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>包粽子</h3>
+                            <p>家人团聚包粽子，传承美食文化。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="national" class="tab-content">
+                <h3>国庆节习俗</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>观看升旗</h3>
+                            <p>参加升旗仪式，感受爱国情怀。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>国庆游行</h3>
+                            <p>参与各地举办的庆祝活动和游行。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="moon" class="tab-content">
+                <h3>中秋习俗详解</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>赏月</h3>
+                            <p>全家团圆赏月，共享天伦之乐。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>品月饼</h3>
+                            <p>分享美味月饼，寄托思念之情。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="newyear" class="tab-content">
+                <h3>元旦习俗</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>跨年活动</h3>
+                            <p>参加跨年晚会，迎接新年到来。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h3>新年愿望</h3>
+                            <p>制定新年计划，许下美好心愿。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>版权所有 © 2025 节日庆祝网站</p>
+    </footer>
+
+    <script>
+        function openTab(tabName) {
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+
+            var tabButtons = document.getElementsByClassName('tab-button');
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            document.getElementById(tabName).classList.add('active');
+            
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html> 

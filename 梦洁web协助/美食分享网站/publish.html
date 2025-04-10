@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布食谱 - 美食分享网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 复用基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7f5;
+            color: #2c3e50;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2ecc71;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2ecc71;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        /* 发布页面特定样式 */
+        .publish-container {
+            max-width: 800px;
+            margin: 120px auto 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .publish-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .publish-header h1 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .publish-form {
+            display: grid;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #34495e;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        .image-upload {
+            border: 2px dashed #e0e0e0;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-upload:hover {
+            border-color: #2ecc71;
+            background-color: rgba(46, 204, 113, 0.05);
+        }
+
+        .image-upload i {
+            font-size: 48px;
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+
+        .image-preview {
+            display: none;
+            max-width: 100%;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+
+        .ingredients-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .ingredient-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .remove-ingredient {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .add-ingredient {
+            background: none;
+            border: 2px dashed #2ecc71;
+            color: #2ecc71;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .add-ingredient:hover {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .steps-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .step-item {
+            display: grid;
+            gap: 10px;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        .submit-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .publish-container {
+                margin: 100px 20px 40px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i>
+                美食分享
+            </a>
+            <nav class="nav-menu">
+                <a href="index.html">首页</a>
+                <a href="chinese.html">中式美食</a>
+                <a href="western.html">西式美食</a>
+                <a href="dessert.html">甜品专区</a>
+                <a href="publish.html" class="active">发布食谱</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="publish-container">
+        <div class="publish-header">
+            <h1>发布食谱</h1>
+            <p>分享你的美食配方，让更多人品尝美味</p>
+        </div>
+
+        <form class="publish-form" id="recipeForm">
+            <div class="form-group">
+                <label for="title">食谱名称</label>
+                <input type="text" id="title" name="title" required placeholder="请输入食谱名称">
+            </div>
+
+            <div class="form-group">
+                <label for="category">食谱分类</label>
+                <select id="category" name="category" required>
+                    <option value="">请选择分类</option>
+                    <option value="chinese">中式美食</option>
+                    <option value="western">西式美食</option>
+                    <option value="dessert">甜品</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">食谱简介</label>
+                <textarea id="description" name="description" rows="3" required placeholder="简单介绍一下这道美食吧"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>食材清单</label>
+                <div class="ingredients-list" id="ingredientsList">
+                    <div class="ingredient-item">
+                        <input type="text" placeholder="请输入食材名称和用量" required>
+                        <button type="button" class="remove-ingredient">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="add-ingredient" id="addIngredient">
+                    <i class="fas fa-plus"></i> 添加食材
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>烹饪步骤</label>
+                <div class="steps-list" id="stepsList">
+                    <div class="step-item">
+                        <div class="step-header">
+                            <span class="step-number">步骤 1</span>
+                            <button type="button" class="remove-ingredient">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <textarea rows="3" placeholder="请描述这个步骤" required></textarea>
+                    </div>
+                </div>
+                <button type="button" class="add-ingredient" id="addStep">
+                    <i class="fas fa-plus"></i> 添加步骤
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label for="tips">烹饪小贴士</label>
+                <textarea id="tips" name="tips" rows="3" placeholder="分享一些烹饪技巧和注意事项"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">发布食谱</button>
+        </form>
+    </main>
+
+    <script>
+        const recipeForm = document.getElementById('recipeForm');
+        recipeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // mock
+            setTimeout(() => {
+                alert('食谱发布成功！');
+                this.reset();
+            }, 1000);
+            
+            return false;
+        });
+    </script>
+</body>
+</html> 
