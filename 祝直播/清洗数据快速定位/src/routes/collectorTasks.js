@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const HttpClient = require('../config/httpClient');
+const moment = require('moment');
+const fetch = require('node-fetch');
 
 router.get('/', async (req, res) => {
   res.json({
@@ -56,6 +57,177 @@ router.get('/tasks', async (req, res) => {
 });
 
 
+const sourceMap = {
+  'ARTIFICIAL': '人工',
+  'COLLECTOR': '采集器'
+}
+// 查询需要采集的任务信息
+router.get('/getSourceTasks', async (req, res) => {
+  try {
+    const { url } = req.query;
+    
+    if (!url) {
+      return res.status(400).json({
+        code: 400,
+        message: '缺少必要参数 url',
+        data: null
+      });
+    }
+
+    const [rows] = await pool.execute(
+      'SELECT * FROM collector_tasks WHERE room_url = ? AND DATE(FROM_UNIXTIME(create_time)) = CURDATE()',
+      [url]
+    );
+
+    const row = rows?.[0];
+
+    if (!row) {
+      return res.status(400).json({
+        code: 400,
+        message: '没有找到任务',
+        data: null
+      });
+    }
+
+    const controlTask = row.control_task;
+
+    // 数据处理
+    const formattedRows = {
+      id: controlTask.id,
+      source: sourceMap[controlTask.source],
+      createTime: controlTask.createTime,
+      createBy: controlTask.createBy,
+      room_id: controlTask.room_id
+    };
+
+    console.log(`「${moment(row.create_time).format('YYYY-MM-DD HH:mm:ss')}」:task id => ${formattedRows.id}, source => ${formattedRows.source}`);
+
+    res.json({
+      code: 200,
+      message: '查询成功',
+      data: formattedRows
+    });
+
+  } catch (error) {
+    console.error('查询出错:', error);
+    res.status(500).json({
+      code: 500,
+      message: '服务器内部错误',
+      data: null
+    });
+  }
+});
+
+// 删除系统中指定 id 任务
+let token = "91460329-9422-4757-add4-76b450e1ceaf";
+const API_BASE_URL_ZHEJUE = "https://zhibo-test.yeeshun.net";
+
+const deleteSourceTasks = async (id) => {
+  const response = await fetch(`${API_BASE_URL_ZHEJUE}/ai-live-api/crawled/live/mark?id=${id}`, {
+    method: 'DELETE',
+    headers: {
+      "authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+  return await response.json();
+}
+
+const updateToken = async () => {
+  const response = await fetch(`${API_BASE_URL_ZHEJUE}/ai-live-api/system/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: 'harvester',
+      password: 'zhuyi123456'
+    })
+  });
+  return await response.json();
+}
+
+// 删除需要采集的任务信息
+router.get('/deleteSourceTasks', async (req, res) => {
+  try {
+    const { id, room_id } = req.query;
+    
+    if (!id || !room_id) {
+      return res.status(400).json({
+        code: 400,
+        message: '缺少必要参数 id 或 room_id',
+        data: null
+      });
+    }
+
+    // 查询任务是否存在
+    const [rows] = await pool.execute(
+      'SELECT * FROM collector_tasks WHERE room_id = ? AND DATE(FROM_UNIXTIME(create_time)) = CURDATE()',
+      [room_id]
+    );
+
+    const row = rows?.[0];
+
+    // 删除系统中指定 id 任务
+    const deleteTask = async () => {
+      const result = await deleteSourceTasks(id);
+      return result;
+    };
+
+    // 首次尝试删除
+    let result = await deleteTask();
+    
+    // token过期,更新token后重试
+    if (result.code === 401) {
+      const auth = await updateToken();
+      token = auth.data.accessToken;
+      result = await deleteTask();
+    }
+
+    // 删除失败返回错误信息
+    if (result.code !== 200) {
+      return res.json({
+        code: 500,
+        message: '删除失败',
+        data: null
+      });
+    }
+
+    // 删除采集器任务
+    if (row) {
+      await pool.execute(
+        'DELETE FROM collector_tasks WHERE room_id = ?',
+        [room_id]
+      );
+    }
+
+    // 删除上报数据
+    await pool.execute(
+      'DELETE FROM reptile_dy_live_data WHERE reptile_live_mark_id = ?',
+      [id]
+    );
+
+    await pool.execute(
+      'DELETE FROM reptile_chan_live_data WHERE reptile_task_id = ?',
+      [id]
+    );
+
+    res.json({
+      code: 200,
+      message: '删除成功',
+      data: null
+    });
+  } catch (error) {
+    console.error('删除出错:', error);
+    res.status(500).json({
+      code: 500, 
+      message: '服务器内部错误',
+      data: null
+    });
+  }
+});
+
+
 // 直播域名 (Live Domain)
 const LIVE_DOMAIN = "https://live.douyin.com"
 
@@ -76,15 +248,9 @@ const GetLiveRoomPromotions = async ({
     offset = 0,
     limit = 10
 }) => {
-    return await HttpClient.get(`${LIVE_DOMAIN}/live/promotions/page/`, {
-        aid: '6383',
-        room_id: roomId,
-        author_id: authorId,
-        offset,
-        limit
-    }, {
+    const response = await fetch(`${LIVE_DOMAIN}/live/promotions/page/?aid=6383&room_id=${roomId}&author_id=${authorId}&offset=${offset}&limit=${limit}`, {
         headers: {
-            'accept': '*/*',
+            'accept': '*/*', 
             'host': 'live.douyin.com',
             'connection': 'keep-alive',
             'referer': `https://live.douyin.com/${webRid}`,
@@ -92,6 +258,7 @@ const GetLiveRoomPromotions = async ({
             'cookie': cookie
         }
     });
+    return await response.json();
 }
 
 // 查询小黄车列表
@@ -130,7 +297,8 @@ router.get('/getDyPromotions', async (req, res) => {
     const data = {
       promotions: result?.promotions,
       total: result?.total,
-      isTrue: result?.promotions ? true : false
+      isTrue: result?.promotions ? true : false,
+      msg: !result?.promotions ? result?.msg : null
     };
 
     console.log(`「${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}」:promotions => ${data.promotions}, total => ${data.total}`);

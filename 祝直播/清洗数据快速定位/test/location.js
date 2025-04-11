@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         直播间定位工具
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  直播间定位工具
 // @author       duqings
 // @match        *://zhibo-test.yeeshun.net/*
@@ -13,12 +13,15 @@
 (function() {
     'use strict';
 
+    const BASE_URL = 'http://124.222.150.175:40001';
+    // const BASE_URL = 'http://localhost:40001';
+
     // 添加样式
     GM_addStyle(`
         .location-tool {
             position: fixed;
-            top: 200px;
-            right: 20px;
+            top: 100px;
+            right: 100px;
             z-index: 9999;
             background: white;
             padding: 10px;
@@ -90,12 +93,22 @@
         .location-button.clear {
             background: #ff4d4f;
         }
-        .location-button:disabled {
-            background: #bae7ff;
-            cursor: not-allowed;
+        .location-button.clear-url {
+            background: #ff4d4f;
+            width: 100%;
         }
-        .location-button:hover:not(:disabled) {
-            opacity: 0.85;
+        .url-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .location-textarea {
+            padding: 4px 8px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            width: 200px;
+            resize: vertical;
+            min-height: 60px;
         }
         .error-message {
             color: red;
@@ -158,6 +171,21 @@
         
         buttonGroup.appendChild(locateButton);
         buttonGroup.appendChild(clearButton);
+
+        // 添加URL部分
+        const urlSection = document.createElement('div');
+        urlSection.className = 'url-section';
+        
+        const urlInput = document.createElement('textarea');
+        urlInput.className = 'location-textarea';
+        urlInput.placeholder = '请输入房间URL';
+        
+        const urlClearButton = document.createElement('button');
+        urlClearButton.className = 'location-button clear-url';
+        urlClearButton.textContent = '删除';
+        
+        urlSection.appendChild(urlInput);
+        urlSection.appendChild(urlClearButton);
         
         const taskMsg = document.createElement('div');
         taskMsg.className = 'task-msg';
@@ -167,6 +195,7 @@
         
         content.appendChild(input);
         content.appendChild(buttonGroup);
+        content.appendChild(urlSection);
         content.appendChild(errorMsg);
         content.appendChild(taskMsg);
         
@@ -240,6 +269,83 @@
 
         clearButton.addEventListener('click', clearAll);
 
+        // URL输入框失焦事件
+        urlInput.addEventListener('blur', async () => {
+            const url = urlInput.value.trim();
+            if (!url) return;
+
+            try {
+                GM_xmlhttpRequest({
+                    method: 'GET',
+                    url: `${BASE_URL}/api/getSourceTasks?url=${encodeURIComponent(url)}`,
+                    onload: function(response) {
+                        try {
+                            const data = JSON.parse(response.responseText);
+                            if (data.code === 200 && data.data) {
+                                window.sourceTaskData = data.data;
+                                taskMsg.innerHTML = `找到源任务ID: ${data.data.id} <br /> room_id: ${data.data.room_id} <br /> 创建人: ${data.data.createBy}/${data.data.source} <br /> 创建时间: ${data.data.createTime}`;
+                            } else {
+                                window.sourceTaskData = null;
+                                taskMsg.textContent = '未找到相关任务';
+                            }
+                        } catch (error) {
+                            errorMsg.textContent = `解析数据失败: ${error.message}`;
+                            window.sourceTaskData = null;
+                        }
+                    },
+                    onerror: function(error) {
+                        errorMsg.textContent = `查询失败: ${error.message}`;
+                        window.sourceTaskData = null;
+                    }
+                });
+            } catch (error) {
+                errorMsg.textContent = `请求失败: ${error.message}`;
+                window.sourceTaskData = null;
+            }
+        });
+
+        // URL删除按钮点击事件
+        urlClearButton.addEventListener('click', async () => {
+            if (!window.sourceTaskData || !window.sourceTaskData.id) {
+                errorMsg.textContent = '没有可删除的任务';
+                return;
+            }
+
+            const shouldDelete = window.confirm('确定要删除该任务吗？');
+            if (!shouldDelete) return;
+
+            try {
+                GM_xmlhttpRequest({
+                    method: 'GET',
+                    url: `${BASE_URL}/api/deleteSourceTasks?id=${window.sourceTaskData.id}&room_id=${window.sourceTaskData.room_id}`,
+                    onload: function(response) {
+                        try {
+                            const data = JSON.parse(response.responseText);
+                            if (data.code === 200) {
+                                window.sourceTaskData = null;
+                                urlInput.value = '';
+                                taskMsg.textContent = '删除成功';
+                                errorMsg.textContent = '';
+                                alert('删除成功');
+                                setTimeout(() => {
+                                    taskMsg.textContent = '';
+                                }, 2000);
+                            } else {
+                                throw new Error(data.message || '删除失败');
+                            }
+                        } catch (error) {
+                            errorMsg.textContent = `删除失败: ${error.message}`;
+                        }
+                    },
+                    onerror: function(error) {
+                        errorMsg.textContent = `删除请求失败: ${error.message}`;
+                    }
+                });
+            } catch (error) {
+                errorMsg.textContent = `发起删除请求失败: ${error.message}`;
+            }
+        });
+
         return { 
             input, 
             locateButton, 
@@ -255,7 +361,7 @@
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: `http://124.222.150.175:40001/api/tasks?room_id=${roomId}`,
+                url: `${BASE_URL}/api/tasks?room_id=${roomId}`,
                 onload: function(response) {
                     try {
                         const data = JSON.parse(response.responseText);
