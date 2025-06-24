@@ -1,0 +1,7 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules", "*.test.js"],
+  "watch": ["src"],
+  "ext": "js,json",
+  "delay": "1000"
+} 

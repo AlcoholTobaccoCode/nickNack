@@ -1,8 +1,10 @@
 const express = require('express');
-const router = express.Router();
-const pool = require('../config/database');
 const moment = require('moment');
 const fetch = require('node-fetch');
+const { getWssUrl } = require('./signature');
+const { BrowserManager } = require('./playwrightApi');
+const router = express.Router();
+const pool = require('../config/database');
 
 router.get('/', async (req, res) => {
   res.json({
@@ -17,7 +19,7 @@ router.get('/', async (req, res) => {
 router.get('/tasks', async (req, res) => {
   try {
     const { room_id } = req.query;
-    
+
     if (!room_id) {
       return res.status(400).json({
         code: 400,
@@ -65,7 +67,7 @@ const sourceMap = {
 router.get('/getSourceTasks', async (req, res) => {
   try {
     const { url } = req.query;
-    
+
     if (!url) {
       return res.status(400).json({
         code: 400,
@@ -151,7 +153,7 @@ const updateToken = async () => {
 router.get('/deleteSourceTasks', async (req, res) => {
   try {
     const { id, room_id } = req.query;
-    
+
     if (!id || !room_id) {
       return res.status(400).json({
         code: 400,
@@ -176,7 +178,7 @@ router.get('/deleteSourceTasks', async (req, res) => {
 
     // 首次尝试删除
     let result = await deleteTask();
-    
+
     // token过期,更新token后重试
     if (result.code === 401) {
       const auth = await updateToken();
@@ -220,7 +222,7 @@ router.get('/deleteSourceTasks', async (req, res) => {
   } catch (error) {
     console.error('删除出错:', error);
     res.status(500).json({
-      code: 500, 
+      code: 500,
       message: '服务器内部错误',
       data: null
     });
@@ -241,24 +243,24 @@ const LIVE_DOMAIN = "https://live.douyin.com"
  * @param {string} cookie 用户cookie
  */
 const GetLiveRoomPromotions = async ({
-    roomId,
-    webRid,
-    authorId,
-    cookie,
-    offset = 0,
-    limit = 10
+  roomId,
+  webRid,
+  authorId,
+  cookie,
+  offset = 0,
+  limit = 10
 }) => {
-    const response = await fetch(`${LIVE_DOMAIN}/live/promotions/page/?aid=6383&room_id=${roomId}&author_id=${authorId}&offset=${offset}&limit=${limit}`, {
-        headers: {
-            'accept': '*/*', 
-            'host': 'live.douyin.com',
-            'connection': 'keep-alive',
-            'referer': `https://live.douyin.com/${webRid}`,
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0',
-            'cookie': cookie
-        }
-    });
-    return await response.json();
+  const response = await fetch(`${LIVE_DOMAIN}/live/promotions/page/?aid=6383&room_id=${roomId}&author_id=${authorId}&offset=${offset}&limit=${limit}`, {
+    headers: {
+      'accept': '*/*',
+      'host': 'live.douyin.com',
+      'connection': 'keep-alive',
+      'referer': `https://live.douyin.com/${webRid}`,
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0',
+      'cookie': cookie
+    }
+  });
+  return await response.json();
 }
 
 // 查询小黄车列表
@@ -266,11 +268,11 @@ router.get('/getDyPromotions', async (req, res) => {
   try {
     const { room_id, web_rid, author_id } = req.query;
     const cookie = req.headers.authorization;
-    
+
     // 参数校验
     const requiredParams = {
       room_id: '直播间ID',
-      web_rid: '房间ID', 
+      web_rid: '房间ID',
       author_id: '主播ID',
       cookie: 'Cookie'
     };
@@ -288,10 +290,10 @@ router.get('/getDyPromotions', async (req, res) => {
     }
 
     const result = await GetLiveRoomPromotions({
-        roomId: room_id,
-        webRid: web_rid,
-        authorId: author_id,
-        cookie: cookie
+      roomId: room_id,
+      webRid: web_rid,
+      authorId: author_id,
+      cookie: cookie
     });
 
     const data = {
@@ -316,6 +318,94 @@ router.get('/getDyPromotions', async (req, res) => {
       message: '服务器内部错误',
       data: null
     });
+  }
+});
+
+const GenerateTtwid = async () => {
+  const response = await fetch(`http://172.16.5.17:1801/api/douyin/web/generate_ttwid`);
+  return await response.json();
+}
+
+const FetchUserLiveVideos = async (webcast_id) => {
+  const response = await fetch(`http://172.16.5.17:1801/api/douyin/web/fetch_user_live_videos?webcast_id=${webcast_id}`);
+  return await response.json();
+}
+
+const gotoLivePage = async ({
+  url,
+  roomId
+}) => {
+
+  return new Promise(async (resolve, reject) => {
+    const browserManager = new BrowserManager();
+    await browserManager.init();
+
+  await browserManager.loadPage({
+    url
+  }, {
+    onLoaded: async (page) => {
+      console.log('页面加载完成 ✨✨✨', 'col');
+      const wssUrl = await getWssUrl(page, roomId);
+      // console.log('wssUrl => ', wssUrl);
+      await browserManager.close();
+      resolve(wssUrl);
+    },
+    onError: async (error) => {
+        console.error(`页面加载错误: ${error.message}`, 'col');
+        await browserManager.close();
+      }
+    });
+  });
+}
+
+router.get('/getLiveRoomWs', async (req, res) => {
+  try {
+    const { web_rid } = req.query;
+    
+    if (!/\d{8,12}/.test(web_rid)) {
+      return res.status(400).json({
+        code: 400,
+        message: '请输入正确的房间号',
+        data: null
+      });
+    }
+
+    const roomInfo = await FetchUserLiveVideos(web_rid);
+    const finalRoomId = roomInfo?.data?.data?.enter_room_id;
+    const roomName = roomInfo?.data?.data?.data?.[0]?.title;
+
+    // 生成 ttwid
+    const getTtwid = await GenerateTtwid();
+    // 默认
+    let ttwid = '1%7CUIsYBp9HOuSwq6dP59Qf4ZdjwNCcZll0VRSE5ePbFzM%7C1742140517%7C82c777ecf691fa5b9850bd97d52e53d4e2cd33bb60d90ff410a277bb6c9ab34c';
+    if (getTtwid.code === 200) {
+      ttwid = getTtwid.data.ttwid;
+    }
+
+    const wssUrl = await gotoLivePage({
+      url: `https://live.douyin.com/${web_rid}`,
+      roomId: finalRoomId
+    });
+
+    console.log(`「${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}」:web_rid => ${web_rid}`);
+
+    res.json({
+      code: 200,
+      message: '查询成功',
+      data: {
+        wssUrl,
+        ttwid,
+        roomName
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: '服务器内部错误',
+      data: null
+    });
+
   }
 });
 
