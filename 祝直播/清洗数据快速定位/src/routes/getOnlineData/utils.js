@@ -61,7 +61,7 @@ const GetLiveMarkCount = async (date, isComplete = 0) => {
     
     return {
         total: rows[0].total,
-        isComplete,
+        isComplete: isComplete === 1 ? true : false,
         timeRanges: timeRanges
     }
   } catch (error) {

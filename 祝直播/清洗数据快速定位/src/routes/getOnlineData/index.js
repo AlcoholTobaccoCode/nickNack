@@ -9,9 +9,24 @@ const {
 } = require("./utils.js");
 
 router.get("/", (req, res) => {
-  res.send("Hello World!!!");
+  const date = {
+    code: 200,
+    message: '获取成功',
+    currentTime: moment().valueOf(),
+    formatDate: moment().format('YYYY-MM-DD HH:mm:ss')
+  }
+  res.send(date);
 });
 
+router.get("/getYesterdayData", (req, res) => {
+  const date = {
+    code: 200,
+    message: '获取成功',
+    yesterdayTime: moment().subtract(1, 'day').valueOf(),
+    formatDate: moment().subtract(1, 'day').format('YYYY-MM-DD HH:mm:ss')
+  }
+  res.send(date);
+});
 
 /**
  * @description: 获取指定日期数据
