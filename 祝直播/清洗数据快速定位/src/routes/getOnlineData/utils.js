@@ -1,5 +1,4 @@
-// const poolOnline = require('../../config/database-online.js');
-const poolOnline = require('../../config/database.js');
+const poolOnline = require('../../config/database-online.js');
 const moment = require('moment');
 
 /**
