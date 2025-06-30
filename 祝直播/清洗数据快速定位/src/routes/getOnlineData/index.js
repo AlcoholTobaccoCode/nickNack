@@ -5,7 +5,8 @@ const router = express.Router();
 
 const {
   GetLiveMarkCount,
-  GetValidMaterialCount
+  GetValidMaterialCount,
+  GetMaterialUsage
 } = require("./utils.js");
 
 router.get("/", (req, res) => {
@@ -41,25 +42,21 @@ router.get("/getDataByDay", async (req, res) => {
   try {
     const { date, isComplete } = req.query;
 
-    let today = date
-      ? moment(date, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss")
-      : null;
+    // 优化日期处理逻辑
+    const today = date ? moment(date, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss") : null;
 
-    const total = await GetLiveMarkCount(today, isComplete);
+    const result = await GetLiveMarkCount(today, isComplete);
 
-    const dataTemp = {
+    res.send({
       code: 200,
       message: "查询成功",
-      data: {
-        ...total,
-      },
-    };
-
-    res.send(dataTemp);
+      data: result
+    });
   } catch (error) {
-    res.send({
+    console.error('获取指定日期数据失败:', error);
+    res.status(400).send({
       code: 400,
-      message: error,
+      message: error.message || '查询失败'
     });
   }
 });
@@ -73,28 +70,41 @@ router.get("/getDataByDay", async (req, res) => {
 */
 router.get("/getValidMaterialCount", async (req, res) => {
   try {
-
     const { date } = req.query;
 
-    let today = date
-      ? moment(date, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss")
-      : null;
+    const total = await GetValidMaterialCount(date);
 
-    const total = await GetValidMaterialCount(today);
+    res.send({
+      code: 200,
+      message: "查询成功",
+      data: { total }
+    });
+  } catch (error) {
+    res.send({
+      code: 400,
+      message: error.message || error
+    });
+  }
+});
+
+// 获取素材使用情况
+router.get("/getMaterialUsage", async (req, res) => {
+  try {
+    const { date, isAll } = req.query;
+
+    const result = await GetMaterialUsage(date, isAll);
 
     const dataTemp = {
       code: 200,
       message: "查询成功",
-      data: {
-        total,
-      },
+      data: result,
     };
 
     res.send(dataTemp);
   } catch (error) {
     res.send({
       code: 400,
-      message: error,
+      message: error.message || error,
     });
   }
 });
