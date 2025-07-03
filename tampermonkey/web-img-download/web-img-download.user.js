@@ -134,7 +134,23 @@
         .cart-list {
             overflow-y: auto;
             height: calc(100vh - 120px);
+            position: relative;
         }
+        .cart-list:empty::after {
+            content: "暂无数据";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+            font-size: 18px;
+            letter-spacing: 2px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
         .cart-item {
             display: flex;
             align-items: center;
@@ -651,9 +667,9 @@
                     <div class="cart-item-image-container">
                         <img src="${url}" alt="已选图片">
                     </div>
-                    <div class="cart-item-actions">
-                        <button class="img-btn download-btn">下载</button>
-                        <button class="img-btn remove-btn">删除</button>
+                    <div class="cart-item-actions" data-url="${url}">
+                        <button class="img-btn download-btn cart-list-download-btn">下载</button>
+                        <button class="img-btn remove-btn cart-list-remove-btn">删除</button>
                     </div>
                 </div>
             `);
@@ -874,8 +890,10 @@
             $('.cart-item-check:checked').each((_, checkbox) => {
                 const item = $(checkbox).closest('.cart-item');
                 const url = item.find('img').attr('src');
+                const decodeUrl = decodeURIComponent(url);
                 selectedImages.delete(url);
                 $(`img[src="${url}"]`).removeClass('selected-img');
+                $(`img[src="${decodeUrl}"]`).removeClass('selected-img');
                 item.remove();
             });
             updateCartCount();
@@ -886,6 +904,29 @@
             cartDrawerVisible = false;
             cartDrawer.removeClass('active');
             log('购物车抽屉已关闭');
+        });
+
+        // 购物车列表下载按钮
+        $(document).on('click', '.cart-list-download-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = $(this).parent().data('url');
+            downloadImage(url);
+        });
+
+        // 购物车列表删除按钮
+        $(document).on('click', '.cart-list-remove-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = $(this).parent().data('url');
+            const decodeUrl = decodeURIComponent(url);
+            selectedImages.delete(url);
+            // 原页面中元素取消高亮
+            document.querySelectorAll(`img[src="${url}"]`)?.forEach(img => img.classList.remove('selected-img'));
+            document.querySelectorAll(`img[src="${decodeUrl}"]`)?.forEach(img => img.classList.remove('selected-img'));
+            // 删除当前列元素
+            $(this).parents('.cart-item').remove();
+            updateCartCount();
         });
 
         log('脚本初始化完成');
