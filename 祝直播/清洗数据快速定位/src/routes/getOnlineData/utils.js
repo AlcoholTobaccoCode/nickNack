@@ -143,7 +143,7 @@ const GetMaterialUsage = async (date, isAll = 0) => {
     const [rows] = await poolOnline.execute(query, params);
 
     return {
-        total: rows[0].total || 0,
+        total: +rows[0].total || 0,
         isAll: isAll === 1 ? true : false,
         timeRanges: dateTimeRanges
     }
